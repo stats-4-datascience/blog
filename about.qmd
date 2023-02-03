@@ -1,0 +1,17 @@
+---
+title: "About"
+about:
+  template: jolla
+  links:
+    - icon: github
+      text: GitLab
+      href: https://github.com/stats-4-datascience
+---
+
+<center>
+
+![](assets/stats4datascience.png){width=60%}
+
+</center>
+
+Coming Soon!
