@@ -1,0 +1,43 @@
+/* css styles */
+
+.navbar-title {
+  font-family: "Regular", Verdana, sans-serif;
+  letter-spacing: 0.12rem;
+}
+
+.navbar-title .fancy-four {
+  padding: 0 0.2rem;
+  font-family: "Regular", Brush Script MT, Brush Script Std, cursive;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+.quarto-title-block .quarto-title-banner {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+em {
+  color: var(--bs-primary);
+}
+
+div.callout.callout-definition {
+  border-left-color: rgba(var(--bs-body-color-rgb), 0.05);
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  background-color: rgba(var(--bs-body-color-rgb), 0.05);
+}
+
+div.callout.callout-definition > .callout-header {
+  background-color: transparent;
+}
+
+div.callout.callout-definition > .callout-body {
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 0.25rem;
+}
+
