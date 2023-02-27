@@ -16,7 +16,11 @@ author:
     affiliation: Genentech
     affiliation-url: https://www.gene.com/
 
-citation: true
+citation:
+  type: post
+  title: How to get the most out of prognostic baseline variables in clinical trials
+  author: Courtney Schiffman, Michel Friesenhahn and Christina Rabe
+  url: https://www.stats4datascience.com/posts/covariate_adjustment/
 bibliography: references.bib
 ---
 
@@ -1189,7 +1193,7 @@ Daniela Ferrara, Julia Cluceru, Verena Steffen
 
 **Methods, Collaboration, Outreach (MCO)**: Ray Lin, Marcel Wolbers
 
-**Website design**: Doug Kelkhoff
+**Website Development**: Doug Kelkhoff
 
 # Appendix
 
