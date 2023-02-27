@@ -10,7 +10,7 @@
 <atom:link href="https://github.com/stats-4-datascience/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.2.335</generator>
-<lastBuildDate>Fri, 03 Feb 2023 18:12:01 GMT</lastBuildDate>
+<lastBuildDate>Mon, 27 Feb 2023 22:48:52 GMT</lastBuildDate>
 <item>
   <title>How to get the most out of prognostic baseline variables in clinical trials</title>
   <dc:creator>Courtney Schiffman</dc:creator>
@@ -671,7 +671,7 @@ No Correlation in Treatment Arm
 <h1>Acknowledgements</h1>
 <p><strong>Roche GA Development Team</strong>: Neha Anegondi, Lee Honigberg, Simon Gao, Qi Yang, Daniela Ferrara, Julia Cluceru, Verena Steffen</p>
 <p><strong>Methods, Collaboration, Outreach (MCO)</strong>: Ray Lin, Marcel Wolbers</p>
-<p><strong>Website design</strong>: Doug Kelkhoff</p>
+<p><strong>Website Development</strong>: Doug Kelkhoff</p>
 </section>
 <section id="appendix" class="level1">
 <h1>Appendix</h1>
@@ -826,18 +826,18 @@ font-style: italic;">## HW SEs</span></span>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">True SE</td>
-<td style="text-align: center;">0.0209160</td>
-<td style="text-align: center;">0.0209037</td>
+<td style="text-align: center;">0.0212218</td>
+<td style="text-align: center;">0.0212169</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Mean TMLE SE</td>
-<td style="text-align: center;">0.0211704</td>
-<td style="text-align: center;">0.0211693</td>
+<td style="text-align: center;">0.0211724</td>
+<td style="text-align: center;">0.0211713</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Mean HW SE</td>
-<td style="text-align: center;">0.0211730</td>
-<td style="text-align: center;">0.0154877</td>
+<td style="text-align: center;">0.0211750</td>
+<td style="text-align: center;">0.0154901</td>
 </tr>
 </tbody>
 </table>
@@ -964,23 +964,22 @@ Wong, Jeffrey, Randall Lewis, and Matthew Wardrop. 2019. <span>“Efficient Comp
 <div id="ref-Tsiatis2001" class="csl-entry">
 Yang, Li, and Anastasios A. Tsiatis. 2001. <span>“Efficiency Study of Estimators in a Pretest-Posttest Trial.”</span> <em>The American Statistician</em>.
 </div>
-</div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{schiffman,
-  author = {Courtney Schiffman and Michel Friesenhahn and Christina
-    Rabe},
+</div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{schiffman,michelfriesenhahnandchristinarabe,
+  author = {Courtney Schiffman, Michel Friesenhahn and Christina Rabe},
   title = {How to Get the Most Out of Prognostic Baseline Variables in
     Clinical Trials},
-  url = {https://github.com/stats-4-datascience/blog/posts/covariate_adjustment},
+  url = {https://www.stats4datascience.com/posts/covariate_adjustment/},
   langid = {en}
 }
-</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman" class="csl-entry quarto-appendix-citeas">
-Courtney Schiffman, Michel Friesenhahn, and Christina Rabe. n.d.
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman,michelfriesenhahnandchristinarabe" class="csl-entry quarto-appendix-citeas">
+Courtney Schiffman, Michel Friesenhahn and Christina Rabe. n.d.
 <span>“How to Get the Most Out of Prognostic Baseline Variables in
-Clinical Trials.”</span> <a href="https://github.com/stats-4-datascience/blog/posts/covariate_adjustment">https://github.com/stats-4-datascience/blog/posts/covariate_adjustment</a>.
+Clinical Trials.”</span> <a href="https://www.stats4datascience.com/posts/covariate_adjustment/">https://www.stats4datascience.com/posts/covariate_adjustment/</a>.
 </div></div></section></div> ]]></description>
   <category>covariate adjustment</category>
   <category>stratification</category>
   <guid>https://github.com/stats-4-datascience/blog/posts/covariate_adjustment/index.html</guid>
-  <pubDate>Fri, 03 Feb 2023 18:12:01 GMT</pubDate>
+  <pubDate>Mon, 27 Feb 2023 22:48:52 GMT</pubDate>
   <media:content url="https://github.com/stats-4-datascience/blog/posts/covariate_adjustment/images/increased_precision.png" medium="image" type="image/png" height="65" width="144"/>
 </item>
 </channel>
