@@ -23,9 +23,9 @@ date-modified: last-modified
 citation:
   type: post
   title: How to get the most out of prognostic baseline variables in clinical trials. Effective strategies for employing covariate adjustment and stratification.
-  author: Courtney Schiffman, Christina Rabe and Michel Friesenhahn 
-  url: https://www.go.roche.com/stats4datascience
-  issued: 2022/10/12
+  author: Courtney Schiffman and Christina Rabe and Michel Friesenhahn 
+  url: stats4datascience.com
+  available-date: 2022/10/12
 bibliography: references.bib
 ---
 
