@@ -9,18 +9,23 @@ author:
   - name: Courtney Schiffman
     affiliation: Genentech
     affiliation-url: https://www.gene.com/
-  - name: Michel Friesenhahn
-    affiliation: Genentech
-    affiliation-url: https://www.gene.com/
+    email: schiffman.courtney@gene.com
   - name: Christina Rabe
     affiliation: Genentech
     affiliation-url: https://www.gene.com/
-
+    email: rabe.christina@gene.com    
+  - name: Michel Friesenhahn
+    affiliation: Genentech
+    affiliation-url: https://www.gene.com/
+    email: friesenhahn.michel@gene.com
+date: 10/12/2022
+date-modified: last-modified
 citation:
   type: post
-  title: How to get the most out of prognostic baseline variables in clinical trials
-  author: Courtney Schiffman, Michel Friesenhahn and Christina Rabe
-  url: https://www.stats4datascience.com/posts/covariate_adjustment/
+  title: How to get the most out of prognostic baseline variables in clinical trials. Effective strategies for employing covariate adjustment and stratification.
+  author: Courtney Schiffman, Christina Rabe and Michel Friesenhahn 
+  url: https://www.go.roche.com/stats4datascience
+  issued: 2022/10/12
 bibliography: references.bib
 ---
 
@@ -103,8 +108,9 @@ and ordinal outcomes as well.
 </center>
 
 
+
 Covariate adjustment has recently gained popularity in a variety of industries.
-In drug development, the FDA has provided a [draft guidance
+In drug development, the FDA has provided a [guidance
 document](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products) that strongly encourages its use. There are
 also several start-ups who offer covariate adjustment to optimize analysis of
 online experiments as a key use case for their prognostic models [@Netflix;
@@ -286,19 +292,21 @@ Extensions to other sampling frameworks have also been explored [@Wang2021].
 
 ## Covariate Adjustment is Encouraged by the FDA
 
-In a 2021 [draft
-guidance](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products),
-pre-specified covariate adjustment was fully supported and encouraged by the FDA
+In a May 2023 [
+guidance](https://www.fda.gov/drugs/drug-safety-and-availability/fda-issues-final-guidance-adjusting-covariates-randomized-clinical-trials),
+pre-specified covariate adjustment was fully supported by the FDA
 as a primary endpoint analysis in clinical trials:
 
-> "Although an unadjusted analysis is acceptable for the primary analysis,
-> adjustment for baseline covariates will generally reduce the variability of
-> estimation of treatment effects and thus lead to narrower confidence intervals
-> and more powerful hypothesis testing" [@FDA]. 
+> Sponsors can adjust for baseline covariates in the analyses of efficacy
+> endpoints in randomized clinical trials. Doing so will generally reduce
+> the variability of estimation of treatment effects and thus lead to 
+> narrower confidence intervals and more powerful hypothesis testing." [@FDA]. 
 
-Importantly, the guidance states that "[s]ponsors should prospectively specify
-the covariates and the mathematical form of the covariate adjusted estimator"
-[@FDA]. We interpret this to mean that the exact working regression model form
+Importantly, the guidance states that "[s]ponsors should prospectively specify the 
+detailed procedures for executing covariate adjusted analysis before any unblinding 
+of comparative data. FDA review will emphasize the prespecified primary analysis
+rather than post-hoc analyses using different models or covariates"[@FDA].
+We interpret this to mean that the exact working regression model form
 should be pre-specified before working with the trial data. Independent data
 from observational cohorts or previous trials can be used to select or develop
 covariates. These covariates may be existing baseline variables or even the
@@ -334,8 +342,8 @@ arms. This estimator is often referred to as the **standardized regression
 estimator**, and is also an example of a targeted maximum likelihood estimator.
 There are other consistent estimators of the marginal ATE that use covariate
 adjustment (see @Colantuoni2015 for examples). However, we suggest using the
-standardized regression estimator because it is easy to use, "statistically
-reliable" [@FDA], has comparable power and can also be used to estimate TAMS and
+standardized regression estimator because it is easy to use, is a "reliable method for covariate adjustment" [@FDA],
+has comparable power and can also be used to estimate TAMS and
 marginal ATEs for non-continuous outcomes.
 
 In the notation below, $A$ is a two-level factor indicating treatment
@@ -381,7 +389,7 @@ Other contrasts of the marginal means (TAMs) may be similarily estimated.
 |      | outcome under EACH treatment   |                                                                              |
 |      | of interest (regardless of     | # Binary outcome                                                             |
 |      | what their assigned treatment  | pred0 <- predict(mod.fit, newdata = data.frame(A=0, X=d$X), type=‘response’) |
-|      | was)                           | pred1 <- predict(mod.fit, newdata = data.frame(A=1, X=d$X, type=‘response’)  |
+|      | was)                           | pred1 <- predict(mod.fit, newdata = data.frame(A=1, X=d$X), type=‘response’)  |
 |      |                                | ```                                                                          |
 +------+--------------------------------+------------------------------------------------------------------------------+
 | 3    | Take the average of the        | ```{ .sourceCode .r }                                                        |
@@ -432,17 +440,10 @@ especially if your trial sample size is too small to support
 treatment-by-covariate interactions (see [model budget section][Determining your
 Model Budget]).
  
-In case of missing values in baseline covariates, the FDA draft guidance
-suggests that "covariate adjustment is generally robust to the handling of
-subjects with missing baseline covariates. Missing baseline covariate values can
-be singly or multiply imputed, or missingness indicators (Groenwold et al. 2012)
-can be added to the model used for covariate adjustment. Sponsors should not
-perform imputation separately for different treatment groups, and sponsors
-should ensure that imputed baseline values are not dependent on any
-post-baseline variables, including the outcome" [@FDA]. A baseline covariate
+In case of missing values in baseline covariates, a baseline covariate
 that has too many missing values should not be used for adjustment, but if the
 number of missing values is small, we recommend simple, single imputation as
-opposed to using indicator variables in order to spend the model budget wisely. 
+opposed to using indicator variables in order to spend the model budget wisely.  
 
 ## Inference for TAMs and ATEs
 
@@ -496,10 +497,11 @@ estimates corresponding to marginal ATEs using different contrasts (e.g. ratio
 instead of difference) see Rosenblum and van der Laan (2010).
 
 Alternative standard error estimators include the Huber-White estimator and
-re-sampling based methods like the non-parametric bootstrap. In their recent
-guidance, the FDA recommends using the Huber-White robust “sandwich” estimator
-instead of nominal standard error estimates from statistical software [@FDA].
-However, if using a working regression model with treatment-by-covariate
+re-sampling based methods like the non-parametric bootstrap.
+In their recent guidance, the FDA recommends using a "robust standard error method such as the Huber-White “sandwich” 
+standard error when the model does not include treatment by covariate interactions" and they recognize that
+"other robust standard error methods proposed in the literature can also cover cases with interactions" [@FDA].
+If using a working regression model with treatment-by-covariate
 interactions, the expected sandwich standard error estimates may be too small
 when treatment effects are heterogeneous ([see Appendix][Appendix] and @imbens
 , @lin2013). Bootstrap methods are a reasonable alternative, but we prefer TMLE
@@ -521,7 +523,6 @@ covariates:
 > "The statistical properties of covariate adjustment are best understood when
 > the number of covariates adjusted for in the study is small relative to the
 > sample size."[@FDA]
-
 Explicit guidance on how many covariates to adjust for is not offered, so we
 borrow from prognostic modeling practices [@rms].
 
