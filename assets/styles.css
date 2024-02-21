@@ -41,3 +41,6 @@ div.callout.callout-definition > .callout-body {
   padding-bottom: 0.25rem;
 }
 
+.cell-output-display {
+  overflow-x: scroll;
+}
