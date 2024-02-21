@@ -278,20 +278,21 @@ Theil, H. (1970). On the estimation of relationships involving qualitative varia
 <div id="ref-Tjur" class="csl-entry">
 Tjur, T. (2009). Coefficients of determination in logistic regression models—a new proposal: The coefficient of discrimination. <em>The American Statistician</em>.
 </div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{friesenhahn, christina rabe and courtney schiffman2023,
-  author = {Friesenhahn, Christina Rabe and Courtney Schiffman, Michel},
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{friesenhahn and christina rabe and courtney schiffman2023,
+  author = {Friesenhahn and Christina Rabe and Courtney Schiffman,
+    Michel},
   title = {Everything You Wanted to Know about {R2} but Were Afraid to
     Ask. {Part} 2, {Binary} Outcomes and Generalizing the Fundamental
     Decomposition.},
-  date = {},
+  date = {2023-10-31},
   url = {https://www.go.roche.com/stats4datascience},
   langid = {en}
 }
-</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-friesenhahn, christina rabe and courtney schiffman2023" class="csl-entry quarto-appendix-citeas">
-Friesenhahn, Christina Rabe and Courtney Schiffman, M. (n.d.).
-<em>Everything you wanted to know about R2 but were afraid to ask. Part
-2, Binary outcomes and generalizing the fundamental decomposition.</em>
-Retrieved from <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-friesenhahn and christina rabe and courtney schiffman2023" class="csl-entry quarto-appendix-citeas">
+Friesenhahn and Christina Rabe and Courtney Schiffman, M. (2023, October
+31). <em>Everything you wanted to know about R2 but were afraid to ask.
+Part 2, Binary outcomes and generalizing the fundamental
+decomposition.</em> Retrieved from <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>
 </div></div></section></div> ]]></description>
   <category>machine learning</category>
   <category>model perormance</category>
@@ -939,20 +940,21 @@ Steyerberg, E. W., Vickers, A. J., Cook, N. R., Gerds, T., Gonen, M., Obuchowski
 <div id="ref-Vickers" class="csl-entry">
 Vickers, A. J., &amp; Elkin, E. B. (2006). Decision curve analysis: A novel method for evaluating prediction models. <em>Med Decis Making</em>.
 </div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{friesenhahn, christina rabe and courtney schiffman2023,
-  author = {Friesenhahn, Christina Rabe and Courtney Schiffman, Michel},
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{friesenhahn and christina rabe and courtney schiffman2023,
+  author = {Friesenhahn and Christina Rabe and Courtney Schiffman,
+    Michel},
   title = {Everything You Wanted to Know about {R2} but Were Afraid to
     Ask. {Part} 1, {Using} a Fundamental Decomposition to Gain Insights
     into Predictive Model Performance.},
-  date = {},
+  date = {2023-10-26},
   url = {https://www.go.roche.com/stats4datascience},
   langid = {en}
 }
-</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-friesenhahn, christina rabe and courtney schiffman2023" class="csl-entry quarto-appendix-citeas">
-Friesenhahn, Christina Rabe and Courtney Schiffman, M. (n.d.).
-<em>Everything you wanted to know about R2 but were afraid to ask. Part
-1, Using a fundamental decomposition to gain insights into predictive
-model performance.</em> Retrieved from <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-friesenhahn and christina rabe and courtney schiffman2023" class="csl-entry quarto-appendix-citeas">
+Friesenhahn and Christina Rabe and Courtney Schiffman, M. (2023, October
+26). <em>Everything you wanted to know about R2 but were afraid to ask.
+Part 1, Using a fundamental decomposition to gain insights into
+predictive model performance.</em> Retrieved from <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>
 </div></div></section></div> ]]></description>
   <category>machine learning</category>
   <category>model perormance</category>
@@ -2768,20 +2770,21 @@ Wong, Jeffrey, Randall Lewis, and Matthew Wardrop. 2019. <span>“Efficient Comp
 <div id="ref-Tsiatis2001" class="csl-entry">
 Yang, Li, and Anastasios A. Tsiatis. 2001. <span>“Efficiency Study of Estimators in a Pretest-Posttest Trial.”</span> <em>The American Statistician</em>.
 </div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{schiffman, christina rabe and michel friesenhahn2022,
-  author = {Schiffman, Christina Rabe and Michel Friesenhahn, Courtney},
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{schiffman and christina rabe and michel friesenhahn2022,
+  author = {Schiffman and Christina Rabe and Michel Friesenhahn,
+    Courtney},
   title = {How to Get the Most Out of Prognostic Baseline Variables in
     Clinical Trials. {Effective} Strategies for Employing Covariate
     Adjustment and Stratification.},
-  date = {},
-  url = {https://www.go.roche.com/stats4datascience},
+  date = {2022-10-12},
+  url = {stats4datascience.com},
   langid = {en}
 }
-</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman, christina rabe and michel friesenhahn2022" class="csl-entry quarto-appendix-citeas">
-Schiffman, Christina Rabe and Michel Friesenhahn, Courtney. n.d.
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman and christina rabe and michel friesenhahn2022" class="csl-entry quarto-appendix-citeas">
+Schiffman and Christina Rabe and Michel Friesenhahn, Courtney. 2022.
 <span>“How to Get the Most Out of Prognostic Baseline Variables in
 Clinical Trials. Effective Strategies for Employing Covariate Adjustment
-and Stratification.”</span> <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>.
+and Stratification.”</span> <a href="https://stats4datascience.com">stats4datascience.com</a>.
 </div></div></section></div> ]]></description>
   <category>covariate adjustment</category>
   <category>stratification</category>
