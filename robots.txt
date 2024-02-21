@@ -1,1 +1,1 @@
-Sitemap: https://github.com/stats-4-datascience/blog/sitemap.xml
+Sitemap: https://stats-4-datascience.github.io/blog/sitemap.xml

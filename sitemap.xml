@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://github.com/stats-4-datascience/blog/posts/covariate_adjustment/index.html</loc>
-    <lastmod>2023-02-27T22:48:51.290Z</lastmod>
+    <loc>https://stats-4-datascience.github.io/blog/posts/covariate_adjustment/index.html</loc>
+    <lastmod>2024-02-21T04:44:59.736Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/stats-4-datascience/blog/about.html</loc>
-    <lastmod>2023-02-27T22:48:51.902Z</lastmod>
+    <loc>https://stats-4-datascience.github.io/blog/posts/three_metrics_binary/index.html</loc>
+    <lastmod>2024-02-21T04:44:59.744Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/stats-4-datascience/blog/index.html</loc>
-    <lastmod>2023-02-27T22:48:52.274Z</lastmod>
+    <loc>https://stats-4-datascience.github.io/blog/about.html</loc>
+    <lastmod>2024-02-21T04:44:59.720Z</lastmod>
+  </url>
+  <url>
+    <loc>https://stats-4-datascience.github.io/blog/index.html</loc>
+    <lastmod>2024-02-21T04:44:59.720Z</lastmod>
+  </url>
+  <url>
+    <loc>https://stats-4-datascience.github.io/blog/posts/three_metrics/index.html</loc>
+    <lastmod>2024-02-21T04:44:59.744Z</lastmod>
   </url>
 </urlset>

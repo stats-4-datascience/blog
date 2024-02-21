@@ -2,13 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.335">
+<meta name="generator" content="quarto-1.4.550">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Courtney Schiffman">
 <meta name="author" content="Michel Friesenhahn">
 <meta name="author" content="Christina Rabe">
+<meta name="dcterms.date" content="2022-10-12">
 
 <title>stats4datascience - How to get the most out of prognostic baseline variables in clinical trials</title>
 <style>
@@ -20,11 +21,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -49,48 +51,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -104,8 +78,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -131,7 +104,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,12 +119,42 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../assets/styles.css">
 </head>
@@ -153,10 +162,10 @@ div.csl-indent {
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../../assets/favicon.png" alt="" class="navbar-logo">
     </a>
@@ -164,18 +173,20 @@ div.csl-indent {
     <span class="navbar-title">stats<span class="fancy-four">4</span>datascience</span>
     </a>
   </div>
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -197,41 +208,53 @@ div.csl-indent {
     <div class="quarto-title-meta-heading">Affiliation</div>
     
       <div class="quarto-title-meta-contents">
-      Courtney Schiffman 
+      <p class="author">Courtney Schiffman </p>
     </div>
-      <div class="quarto-title-meta-contents">
+    <div class="quarto-title-meta-contents">
           <p class="affiliation">
               <a href="https://www.gene.com/">
               Genentech
               </a>
             </p>
         </div>
-        <div class="quarto-title-meta-contents">
-      Michel Friesenhahn 
-    </div>
       <div class="quarto-title-meta-contents">
+      <p class="author">Michel Friesenhahn </p>
+    </div>
+    <div class="quarto-title-meta-contents">
           <p class="affiliation">
               <a href="https://www.gene.com/">
               Genentech
               </a>
             </p>
         </div>
-        <div class="quarto-title-meta-contents">
-      Christina Rabe 
-    </div>
       <div class="quarto-title-meta-contents">
+      <p class="author">Christina Rabe </p>
+    </div>
+    <div class="quarto-title-meta-contents">
           <p class="affiliation">
               <a href="https://www.gene.com/">
               Genentech
               </a>
             </p>
         </div>
-      </div>
+    </div>
 
   <div class="quarto-title-meta">
 
         
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 12, 2022</p>
+      </div>
+    </div>
     
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">February 21, 2024</p>
+      </div>
+    </div>
       
     </div>
     
@@ -254,29 +277,33 @@ div.csl-indent {
   <ul class="collapse">
   <li><a href="#sampling-framework" id="toc-sampling-framework" class="nav-link" data-scroll-target="#sampling-framework">Sampling framework</a></li>
   <li><a href="#target-estimand" id="toc-target-estimand" class="nav-link" data-scroll-target="#target-estimand">Target Estimand</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conditional-average-treatment-effect" id="toc-conditional-average-treatment-effect" class="nav-link" data-scroll-target="#conditional-average-treatment-effect">Conditional Average Treatment Effect</a></li>
+  <li><a href="#marginal-average-treatment-effect" id="toc-marginal-average-treatment-effect" class="nav-link" data-scroll-target="#marginal-average-treatment-effect">Marginal Average Treatment Effect</a></li>
   <li><a href="#assumptions" id="toc-assumptions" class="nav-link" data-scroll-target="#assumptions">Assumptions</a></li>
-  </ul></li>
   <li><a href="#covariate-adjustment-is-encouraged-by-the-fda" id="toc-covariate-adjustment-is-encouraged-by-the-fda" class="nav-link" data-scroll-target="#covariate-adjustment-is-encouraged-by-the-fda">Covariate Adjustment is Encouraged by the FDA</a></li>
-  </ul></li>
   <li><a href="#how-to-perform-covariate-adjustment" id="toc-how-to-perform-covariate-adjustment" class="nav-link" data-scroll-target="#how-to-perform-covariate-adjustment">How to Perform Covariate Adjustment</a>
   <ul class="collapse">
   <li><a href="#standardized-regression-estimator" id="toc-standardized-regression-estimator" class="nav-link" data-scroll-target="#standardized-regression-estimator">Standardized Regression Estimator</a></li>
   <li><a href="#inference-for-tams-and-ates" id="toc-inference-for-tams-and-ates" class="nav-link" data-scroll-target="#inference-for-tams-and-ates">Inference for TAMs and ATEs</a></li>
   <li><a href="#determining-your-model-budget" id="toc-determining-your-model-budget" class="nav-link" data-scroll-target="#determining-your-model-budget">Determining your Model Budget</a></li>
+  </ul></li>
+  <li><a href="#model-budget" id="toc-model-budget" class="nav-link" data-scroll-target="#model-budget">Model Budget</a></li>
   <li><a href="#spending-your-model-budget-wisely" id="toc-spending-your-model-budget-wisely" class="nav-link" data-scroll-target="#spending-your-model-budget-wisely">Spending your Model Budget Wisely</a></li>
   <li><a href="#accounting-for-stratified-randomization" id="toc-accounting-for-stratified-randomization" class="nav-link" data-scroll-target="#accounting-for-stratified-randomization">Accounting for Stratified Randomization</a></li>
-  </ul></li>
   <li><a href="#performance-metrics" id="toc-performance-metrics" class="nav-link" data-scroll-target="#performance-metrics">Performance Metrics</a>
   <ul class="collapse">
   <li><a href="#intuitive-metrics-for-quantifying-the-expected-benefit-of-adjustment" id="toc-intuitive-metrics-for-quantifying-the-expected-benefit-of-adjustment" class="nav-link" data-scroll-target="#intuitive-metrics-for-quantifying-the-expected-benefit-of-adjustment">Intuitive Metrics for Quantifying the Expected Benefit of Adjustment</a></li>
-  <li><a href="#essi-formulas" id="toc-essi-formulas" class="nav-link" data-scroll-target="#essi-formulas">ESSI Formulas</a>
-  <ul class="collapse">
-  <li><a href="#constant-absolute-treatment-effect" id="toc-constant-absolute-treatment-effect" class="nav-link" data-scroll-target="#constant-absolute-treatment-effect">Constant absolute treatment effect</a></li>
-  <li><a href="#constant-proportional-treatment-effect" id="toc-constant-proportional-treatment-effect" class="nav-link" data-scroll-target="#constant-proportional-treatment-effect">Constant proportional treatment effect</a></li>
+  <li><a href="#essi-formulas" id="toc-essi-formulas" class="nav-link" data-scroll-target="#essi-formulas">ESSI Formulas</a></li>
   </ul></li>
+  <li><a href="#general-essi" id="toc-general-essi" class="nav-link" data-scroll-target="#general-essi">General ESSI</a></li>
+  <li><a href="#constant-absolute-treatment-effect" id="toc-constant-absolute-treatment-effect" class="nav-link" data-scroll-target="#constant-absolute-treatment-effect">Constant absolute treatment effect</a></li>
+  <li><a href="#constant-absolute-treatment-effect-1" id="toc-constant-absolute-treatment-effect-1" class="nav-link" data-scroll-target="#constant-absolute-treatment-effect-1">Constant absolute treatment effect:</a></li>
+  <li><a href="#constant-proportional-treatment-effect" id="toc-constant-proportional-treatment-effect" class="nav-link" data-scroll-target="#constant-proportional-treatment-effect">Constant proportional treatment effect</a></li>
+  <li><a href="#constant-proportional-treatment-effect-1" id="toc-constant-proportional-treatment-effect-1" class="nav-link" data-scroll-target="#constant-proportional-treatment-effect-1">Constant proportional treatment effect</a></li>
   <li><a href="#impact-of-htes-on-gains-from-covariate-adjustment" id="toc-impact-of-htes-on-gains-from-covariate-adjustment" class="nav-link" data-scroll-target="#impact-of-htes-on-gains-from-covariate-adjustment">Impact of HTEs on gains from covariate adjustment</a></li>
   <li><a href="#a-hypothetical-example" id="toc-a-hypothetical-example" class="nav-link" data-scroll-target="#a-hypothetical-example">A Hypothetical Example</a></li>
-  </ul></li>
   <li><a href="#application-to-geographic-atrophy-ga" id="toc-application-to-geographic-atrophy-ga" class="nav-link" data-scroll-target="#application-to-geographic-atrophy-ga">Application to Geographic Atrophy (GA)</a>
   <ul class="collapse">
   <li><a href="#prognostic-model-development" id="toc-prognostic-model-development" class="nav-link" data-scroll-target="#prognostic-model-development">Prognostic Model Development</a></li>
@@ -301,9 +328,7 @@ div.csl-indent {
 
 
 
-<div class="cell">
 
-</div>
 <section id="new-insights-into-an-old-method" class="level1">
 <h1>New Insights into an Old Method</h1>
 <center>
@@ -326,10 +351,14 @@ div.csl-indent {
 <h1>What’s the Big Deal About Covariate Adjustment?</h1>
 <section id="covariate-adjustment-increases-precision-and-power" class="level2">
 <h2 class="anchored" data-anchor-id="covariate-adjustment-increases-precision-and-power">Covariate Adjustment Increases Precision and Power</h2>
-<div id="fig-cov-adj" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/increased_precision.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;1: Covariate adjustment removes explained variability</figcaption><p></p>
+<div id="fig-cov-adj" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cov-adj-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/increased_precision.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cov-adj-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Covariate adjustment removes explained variability
+</figcaption>
 </figure>
 </div>
 <p>Unexplained variability in the outcome data limits the precision with which you can estimate your marginal average treatment effect (ATE). If baseline covariates are prognostic, subtracting off any reasonable linear combination of those covariates from the observed outcomes, and analyzing the differences instead reduces variability of the treatment effect estimate. The marginal ATE estimate calculated using the residuals (observed-predicted) is still asymptotically unbiased, because the expected value of the predictions is equal across all treatment arms. However, the residuals have less variability than the original outcomes, leading to a more precise estimate.</p>
@@ -337,10 +366,14 @@ div.csl-indent {
 <section id="covariate-adjustment-removes-the-impact-of-imbalance" class="level2">
 <h2 class="anchored" data-anchor-id="covariate-adjustment-removes-the-impact-of-imbalance">Covariate Adjustment Removes the Impact of Imbalance</h2>
 <p>A common concern in randomized trials is that treatment groups, by chance, differ in the distributions of one or more important prognostic baseline covariates. When this occurs, one perspective is that this is not a problem since the estimates are still unbiased and type 1 error is still preserved. However, such statistical properties are unconditional on the observed covariate imbalance. When we do condition on observed imbalance, the treatment effect estimates can be biased and type 1 errors can drastically differ from their nominal levels. A simple, clear and insightful analysis of this issue was provided by Stephen Senn who has amusingly remarked “If you are at 35,000 ft, four engines are on fire and the captain has had a heart-attack can you say: ‘Why worry, on average air travel is very safe?’” <span class="citation" data-cites="Senn Senn2010">(<a href="#ref-Senn" role="doc-biblioref">S. J. Senn 1989</a>; <a href="#ref-Senn2010" role="doc-biblioref">S. Senn 2010</a>)</span>.</p>
-<div id="fig-imbalence" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/imbalance.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;2: Conditional type-1 error depending on imbalance</figcaption><p></p>
+<div id="fig-imbalence" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-imbalence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/imbalance.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-imbalence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Conditional type-1 error depending on imbalance
+</figcaption>
 </figure>
 </div>
 <p>How do you address concerns over imbalance? Following the analysis from Stephen Senn, the figure above shows the conditional type 1 error as a function of standardized observed imbalance for a range of assumed correlations between the baseline covariate and outcome. This shows that significance tests for imbalance (a commonly used and misguided practice) can fail to flag imbalance effects even when the conditional probability of a type 1 error well exceeds the nominal level. Therefore, significance tests do not reliably control type 1 error. Instead, Senn showed that covariate adjustment removes conditional bias from treatment effect estimates and leads to correct conditional type 1 errors of constant size.</p>
@@ -353,53 +386,39 @@ div.csl-indent {
 <p>To address the historical confusion and controversy around covariate adjustment, methodological development has clearly specified the sampling framework, target estimand (i.e.&nbsp;population level parameter) and required assumptions. While we focus on continuous outcomes, the rigor of covariate adjustment also applies to non-continuous outcomes.</p>
 <section id="sampling-framework" class="level3">
 <h3 class="anchored" data-anchor-id="sampling-framework">Sampling framework</h3>
-<p>An important but often overlooked component of specifying an estimand and estimator is the assumed sampling framework. A rigorous, adjusted analysis makes the assumed sampling framework transparent. There are several choices for the sampling framework, but we assume here the commonly used super-population framework. Let <span class="math inline">\(N\)</span> be the total sample size for a randomized trial with several treatment arms and let <span class="math inline">\(A=0,1,\ldots,a\)</span> be a random variable denoting treatment arm assignment. In the super-population framework, <span class="math inline">\(N\)</span> full data vectors are assumed to be drawn independently from some unknown, joint distribution. Patient <span class="math inline">\(i's\)</span> full data vector <span class="math inline">\((X_i, Y_i(0),Y_i(1),\ldots,Y_i(a))\)</span> contains baseline covariates <span class="math inline">\(X_i\)</span> and a potential outcome <span class="math inline">\(Y_i(k)\)</span> for each possible treatment assignment <span class="math inline">\(k=0,1,\ldots,a\)</span>. Patient <span class="math inline">\(i's\)</span> observed data vector <span class="math inline">\((A_i, X_i, Y_i)\)</span> consists of their treatment assignment <span class="math inline">\(A_i\)</span>, baseline covariates <span class="math inline">\(X_i\)</span> and <em>observed</em> outcome <span class="math inline">\(Y_i=Y_i(0)I(A_i=0)+\ldots+Y_i(a)I(A_i=a)\)</span>. In the case of simple random sampling, <span class="math inline">\(A\)</span> and <span class="math inline">\(X\)</span> are independent.</p>
+<p>An important but often overlooked component of specifying an estimand and estimator is the assumed sampling framework. A rigorous, adjusted analysis makes the assumed sampling framework transparent. There are several choices for the sampling framework, but we assume here the commonly used super-population framework. Let <span class="math inline">\(N\)</span> be the total sample size for a randomized trial with several treatment arms and let <span class="math inline">\(A=0,1,\ldots,a\)</span> be a random variable denoting treatment arm assignment. In the super-population framework, <span class="math inline">\(N\)</span> full data vectors are assumed to be drawn independently from some unknown, joint distribution. Patient <span class="math inline">\(i's\)</span> full data vector <span class="math inline">\((X_i, Y_i(0),Y_i(1),\ldots,Y_i(a))\)</span> contains baseline covariates <span class="math inline">\(X_i\)</span> and a potential outcome <span class="math inline">\(Y_i(k)\)</span> for each possible treatment assignment <span class="math inline">\(k=0,1,\ldots,a\)</span>. Patient <span class="math inline">\(i's\)</span> observed data vector <span class="math inline">\((A_i, X_i,
+Y_i)\)</span> consists of their treatment assignment <span class="math inline">\(A_i\)</span>, baseline covariates <span class="math inline">\(X_i\)</span> and <em>observed</em> outcome <span class="math inline">\(Y_i=Y_i(0)I(A_i=0)+\ldots+Y_i(a)I(A_i=a)\)</span>. In the case of simple random sampling, <span class="math inline">\(A\)</span> and <span class="math inline">\(X\)</span> are independent.</p>
 <p>It is worth noting that rigorous theory behind covariate adjustment has also been developed under the Neyman framework, which assumes a fixed, finite population where the only source of randomness is treatment assignment <span class="citation" data-cites="lin2013 Peng Ding">(<a href="#ref-lin2013" role="doc-biblioref">Lin 2013</a>; <a href="#ref-Peng" role="doc-biblioref">Ding, Li, and Miratrix 2017</a>, <a href="#ref-Ding" role="doc-biblioref">2019</a>)</span>.</p>
 </section>
 <section id="target-estimand" class="level3">
 <h3 class="anchored" data-anchor-id="target-estimand">Target Estimand</h3>
 <p>Confusion often arises since there are various kinds of covariate adjusted analyses targeting different estimands. For example, covariate adjustment is often used in the estimation of conditional average treatment effects, which are contrasts in treatment arm means that are conditional on baseline covariates. A conditional treatment effect is not a single value, but rather a function of baseline covariates, unless one makes the assumption that the conditional treatment effect is constant.</p>
-<div class="callout-definition callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Conditional Average Treatment Effect
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+</section>
+</section>
+<section id="conditional-average-treatment-effect" class="level1 callout-definition">
+<h1>Conditional Average Treatment Effect</h1>
 <p>A contrast (difference, ratio, etc.) between treatment arm means conditional on baseline covariates. Example of a conditional ATE:</p>
 <p><span id="eq-cond-avg-trt-eff"><span class="math display">\[
 E(Y_{active}|X) - E(Y_{control}|X)
 \tag{1}\]</span></span></p>
-</div>
-</div>
+</section>
 <p>However, in this document, we do not use covariate adjustment for that purpose. Instead, we us <strong>covariate adjustment as a tool to more efficiently estimate the marginal ATE</strong>:</p>
-<div class="callout-definition callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Marginal Average Treatment Effect
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="marginal-average-treatment-effect" class="level1 callout-definition">
+<h1>Marginal Average Treatment Effect</h1>
 <p>A contrast (difference, ratio, etc.) between marginal treatment arm means. Example of a marginal ATE:</p>
 <p><span id="eq-marg-avg-trt-eff"><span class="math display">\[
 E(Y_{active}) - E(Y_{control})
 \tag{2}\]</span></span></p>
-</div>
-</div>
+</section>
 <p>Some researchers suggest focusing on estimating conditional treatment effects and using covariate adjustment for that purpose. While estimating conditional and individualized treatment effects is an important research objective, a discussion about how to do so is beyond the scope of this work. Here, we assume estimating the marginal ATE is the primary objective of a label-enabling clinical trial.</p>
 <p>We note that the terms ‘marginal’ and ‘conditional’ are often conflated with ‘unadjusted’ and ‘adjusted’, however these terms are not synonymous <span class="citation" data-cites="Daniel">(<a href="#ref-Daniel" role="doc-biblioref">Daniel, Zhang, and Farewell 2020</a>)</span>:</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Marginal vs.&nbsp;Conditional
 </div>
 </div>
@@ -407,12 +426,12 @@ Marginal vs.&nbsp;Conditional
 <p>Used to distinguish different kinds of estimands.</p>
 </div>
 </div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Unadjusted vs.&nbsp;Adjusted
 </div>
 </div>
@@ -420,14 +439,12 @@ Unadjusted vs.&nbsp;Adjusted
 <p>Used to distinguish different kinds of estimators.</p>
 </div>
 </div>
-</section>
 <section id="assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="assumptions">Assumptions</h3>
 <p>Historically, researchers have debated how to safely estimate marginal ATEs using covariate adjustment. Some have been hesitant to use covariate adjustment over concerns around model misspecification, bias and possible losses in precision <span class="citation" data-cites="Freedman2008a Freedman2008b">(<a href="#ref-Freedman2008a" role="doc-biblioref">D. A. Freedman 2008a</a>; <a href="#ref-Freedman2008b" role="doc-biblioref">David A. Freedman 2008b</a>)</span>, while others have enthusiastically used covariate adjustment without a second thought.</p>
 <p>Academic research ultimately settled that debate <span class="citation" data-cites="Tsiatis2001 Tsiatis2008 Rosenblum2009 TMLE2010">(<a href="#ref-Tsiatis2001" role="doc-biblioref">Yang and Tsiatis 2001</a>; <a href="#ref-Tsiatis2008" role="doc-biblioref">Tsiatis et al. 2008</a>; <a href="#ref-Rosenblum2009" role="doc-biblioref">Rosenblum and Laan 2009</a>; <a href="#ref-TMLE2010" role="doc-biblioref">Rosenblum and Laan 2010</a>)</span>. A number of approaches to covariate adjustment have been characterized that result in consistent, asymptotically normal estimators of marginal ATEs even if the regression model is misspecified. This means that even if important interactions or non-linearities are excluded, prognostic factors are missed, or factors are included that have no prognostic value, covariate adjustment consistently estimates the marginal ATE.</p>
 <p>The covariate adjustment approach we use is called a <a href="#standardized-regression-estimator">standardized regression estimator</a>, which uses predictions from a working regression model to obtain marginal ATEs. The model is referred to as a working regression model because it does not have to represent the true data generating distribution. Therefore, we refer to covariate adjustment as a <strong>model-assisted, not model-dependent, analysis</strong>. Examples of working regression models include logistic, OLS, and Poisson regression models.</p>
 <p>For the standardized regression estimator, it is sufficient to assume that treatment is assigned via simple random sampling, that the full data vectors are i.i.d. and that all variables are bounded <span class="citation" data-cites="Rosenblum2009 TMLE2010">(<a href="#ref-Rosenblum2009" role="doc-biblioref">Rosenblum and Laan 2009</a>; <a href="#ref-TMLE2010" role="doc-biblioref">Rosenblum and Laan 2010</a>)</span>. Extensions to other sampling frameworks have also been explored <span class="citation" data-cites="Wang2021">(<a href="#ref-Wang2021" role="doc-biblioref">Wang et al. 2021</a>)</span>.</p>
-</section>
 </section>
 <section id="covariate-adjustment-is-encouraged-by-the-fda" class="level2">
 <h2 class="anchored" data-anchor-id="covariate-adjustment-is-encouraged-by-the-fda">Covariate Adjustment is Encouraged by the FDA</h2>
@@ -441,13 +458,13 @@ Unadjusted vs.&nbsp;Adjusted
 <p>In addition, during the planning phase, many choices have to be made when applying machine learning directly to the trial data such as which covariates to present to the machine learning procedure, the method of cross validation to use, which machines to include if using ensemble learning and how to perform standard error estimation. These choices, many of which are based on simulation studies, add to the difficulty of finalizing the statistical analysis plan.</p>
 <p>In summary, applying machine learning to the trial data as part of the primary endpoint analysis adds considerable burden to the study team. <em>This added burden would only be worthwhile if the expected precision gains were meaningful</em>. However, in our experience, complex black-box models rarely outperform simple linear models when working with tabular data and do not support this additional complexity and time.</p>
 </section>
-</section>
 <section id="how-to-perform-covariate-adjustment" class="level1 page-columns page-full">
 <h1>How to Perform Covariate Adjustment</h1>
 <section id="standardized-regression-estimator" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="standardized-regression-estimator">Standardized Regression Estimator</h2>
 <p>Table 1 provides instructions and code for estimating the Treatment Arm Means (TAMs) and the marginal ATE (in this case, the difference in means) using covariate adjustment. The example code shows how to estimate these quantities for trials with two treatment arms, but easily generalizes to more than two arms. This estimator is often referred to as the <strong>standardized regression estimator</strong>, and is also an example of a targeted maximum likelihood estimator. There are other consistent estimators of the marginal ATE that use covariate adjustment (see <span class="citation" data-cites="Colantuoni2015">Colantuoni and Rosenblum (<a href="#ref-Colantuoni2015" role="doc-biblioref">2015</a>)</span> for examples). However, we suggest using the standardized regression estimator because it is easy to use, “statistically reliable” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span>, has comparable power and can also be used to estimate TAMS and marginal ATEs for non-continuous outcomes.</p>
-<p>In the notation below, <span class="math inline">\(A\)</span> is a two-level factor indicating treatment assignment, <span class="math inline">\(Y\)</span> is the observed outcome, <span class="math inline">\(X\)</span> is a baseline covariate, <span class="math inline">\(E[Y|a, X_i] = \mu(a,X_i)\)</span> is the expected value of <span class="math inline">\(Y\)</span> for patient <span class="math inline">\(i\)</span> given their treatment assignment <span class="math inline">\(A_i=a\)</span> and baseline covariate <span class="math inline">\(X_i\)</span>, <span class="math inline">\(\hat{\mu}(a,X_i)\)</span> is the predicted outcome for patient <span class="math inline">\(i\)</span> from the working regression model and an estimate of <span class="math inline">\(\mu(a,X_i)\)</span>, and <span class="math inline">\(N\)</span> is the total trial sample size. The standardized regression estimator for the mean outcome in treatment arm <span class="math inline">\(A=a\)</span> is:</p>
+<p>In the notation below, <span class="math inline">\(A\)</span> is a two-level factor indicating treatment assignment, <span class="math inline">\(Y\)</span> is the observed outcome, <span class="math inline">\(X\)</span> is a baseline covariate, <span class="math inline">\(E[Y|a,
+X_i] = \mu(a,X_i)\)</span> is the expected value of <span class="math inline">\(Y\)</span> for patient <span class="math inline">\(i\)</span> given their treatment assignment <span class="math inline">\(A_i=a\)</span> and baseline covariate <span class="math inline">\(X_i\)</span>, <span class="math inline">\(\hat{\mu}(a,X_i)\)</span> is the predicted outcome for patient <span class="math inline">\(i\)</span> from the working regression model and an estimate of <span class="math inline">\(\mu(a,X_i)\)</span>, and <span class="math inline">\(N\)</span> is the total trial sample size. The standardized regression estimator for the mean outcome in treatment arm <span class="math inline">\(A=a\)</span> is:</p>
 <p><span id="eq-std-reg-mean"><span class="math display">\[
 \widehat{TAM_a}=\frac{1}{N}\sum_{i=1}^{N}\hat{\mu}(a,X_i)
 \tag{3}\]</span></span></p>
@@ -457,9 +474,13 @@ Unadjusted vs.&nbsp;Adjusted
 \tag{4}\]</span></span></p>
 <p>Other contrasts of the marginal means (TAMs) may be similarily estimated.</p>
 <div class="column-page-inset">
-<div id="tbl-estimation" class="anchored">
+<div id="tbl-estimation" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-estimation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Standardized regression estimator for TAMs and marginal ATE
+</figcaption>
+<div aria-describedby="tbl-estimation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
-<caption>Table&nbsp;1: Standardized regression estimator for TAMs and marginal ATE</caption>
 <colgroup>
 <col style="width: 5%">
 <col style="width: 27%">
@@ -519,6 +540,8 @@ Unadjusted vs.&nbsp;Adjusted
 </tbody>
 </table>
 </div>
+</figure>
+</div>
 </div>
 <p>In the example code in Table 1, <span class="math inline">\(X\)</span> is a single covariate, but <span class="math inline">\(X\)</span> can also be a matrix containing a set of individual covariates, a prediction from an independent prognostic model, or a combination thereof. When the working regression model is an additive OLS regression, the standardized regression estimate of the difference in means marginal ATE equals the estimated coefficient for <span class="math inline">\(A\)</span>. This is also true for an interaction model when the covariates are centered. Note that, unlike OLS regression, in generalized linear models the estimated coefficient for treatment does not translate into a marginal ATE.</p>
 <p>Theoretically, it is possible to lose precision with covariate adjustment when using an additive model compared to an unadjusted analysis. In contrast, a standardized regression estimator that uses an interaction working regression model is asymptotically guaranteed to be at least as precise as an unadjusted estimator or adjustment with an additive model. However, it is only under unrealistic conditions that covariate adjustment with an additive model will be less precise than an unadjusted estimator. What is more, if randomization is 1:1 or the covariances between covariates and outcome are equal across treatment arms, then covariate adjustment with an additive model will be as efficient as with an interaction model. In our experience, interaction models do not lead to considerable gains in precision over additive models. Likewise, Tsiatis et al. (2001) performed simulations comparing precision when using an additive vs.&nbsp;an interaction model and “found the loss of efficiency to be trivial in all cases” <span class="citation" data-cites="Tsiatis2001">(<a href="#ref-Tsiatis2001" role="doc-biblioref">Yang and Tsiatis 2001</a>)</span>. Therefore, <strong>additive models are a good default choice</strong> especially if your trial sample size is too small to support treatment-by-covariate interactions (see <a href="#determining-your-model-budget">model budget section</a>).</p>
@@ -560,16 +583,10 @@ Unadjusted vs.&nbsp;Adjusted
 <p>“The statistical properties of covariate adjustment are best understood when the number of covariates adjusted for in the study is small relative to the sample size.”<span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span></p>
 </blockquote>
 <p>Explicit guidance on how many covariates to adjust for is not offered, so we borrow from prognostic modeling practices <span class="citation" data-cites="rms">(<a href="#ref-rms" role="doc-biblioref">Harrell 2011</a>)</span>.</p>
-<div class="callout-definition callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Model Budget
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+</section>
+<section id="model-budget" class="level1 callout-definition">
+<h1>Model Budget</h1>
 <p>The number of allowable terms in the working regression model, excluding the overall intercept. Suggestions for a model budget based on classic events per variable considerations are <span class="citation" data-cites="rms">(<a href="#ref-rms" role="doc-biblioref">Harrell 2011</a>)</span>:</p>
 <table class="table">
 <colgroup>
@@ -602,10 +619,8 @@ Model Budget
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p>Pre-specifying a set of covariates and a working regression model form that satisfies the model budget maintains the rigor and integrity of the statistical analysis. We note that this is a rough guidance and should be considered a useful starting point. Recently, model budget calculations for general prognostic modeling have been refined and in future work it would be helpful to adapt such an approach to covariate adjustment (see <span class="citation" data-cites="Riley2019">R. D. Riley et al. (<a href="#ref-Riley2019" role="doc-biblioref">2019</a>)</span> and <span class="citation" data-cites="Riley2020">R. Riley et al. (<a href="#ref-Riley2020" role="doc-biblioref">2020</a>)</span>).</p>
 </section>
+<p>Pre-specifying a set of covariates and a working regression model form that satisfies the model budget maintains the rigor and integrity of the statistical analysis. We note that this is a rough guidance and should be considered a useful starting point. Recently, model budget calculations for general prognostic modeling have been refined and in future work it would be helpful to adapt such an approach to covariate adjustment (see <span class="citation" data-cites="Riley2019">R. D. Riley et al. (<a href="#ref-Riley2019" role="doc-biblioref">2019</a>)</span> and <span class="citation" data-cites="Riley2020">R. Riley et al. (<a href="#ref-Riley2020" role="doc-biblioref">2020</a>)</span>).</p>
 <section id="spending-your-model-budget-wisely" class="level2">
 <h2 class="anchored" data-anchor-id="spending-your-model-budget-wisely">Spending your Model Budget Wisely</h2>
 <center>
@@ -619,12 +634,12 @@ Historically, pre-specification of a regression model was guided by ad hoc analy
 <li><p><strong>Prioritize maximally prognostic covariates</strong><br>
 The list of candidate prognostic covariates may be too large according to the model budget, in which case a subset of prognostic covariates will need to be selected. We use external/historical data to guide that selection (see upcoming section on <a href="#performance-metrics">Performance Metrics</a>).</p></li>
 </ol>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Pro Tip
 </div>
 </div>
@@ -632,10 +647,14 @@ Pro Tip
 <p>If the model budget is tight and several covariates are expected to meaningfully add prognostic value, consider combining them into a single score and using that in the model instead of the individual covariates.</p>
 </div>
 </div>
-<div id="fig-prog-mod" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/prognostic_modeling.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;3: Leverage independent data to find the most promising prognostic factors/models for covariate adjustment</figcaption><p></p>
+<div id="fig-prog-mod" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-prog-mod-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/prognostic_modeling.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prog-mod-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Leverage independent data to find the most promising prognostic factors/models for covariate adjustment
+</figcaption>
 </figure>
 </div>
 <ol start="3" type="1">
@@ -660,8 +679,7 @@ There is a large body of evidence showing that for tabular data, purely additive
 </ol>
 <p>Such an approach still maintains type 1 error and leads to consistent estimators for marginal ATEs. At worst, inference is conservative (p-values may be too large and confidence intervals too wide) <span class="citation" data-cites="Wang2021">(<a href="#ref-Wang2021" role="doc-biblioref">Wang et al. 2021</a>)</span>. However, <a href="#spending-your-model-budget-wisely">if the model budget is spent wisely</a> to obtain a sensible working regression model, conservatism will be negligible.</p>
 </section>
-</section>
-<section id="performance-metrics" class="level1 page-columns page-full">
+<section id="performance-metrics" class="level1">
 <h1>Performance Metrics</h1>
 <center>
 <p><img src="images/performance.png" class="img-fluid" style="width:50.0%"></p>
@@ -693,16 +711,10 @@ There is a large body of evidence showing that for tabular data, purely additive
 <h2 class="anchored" data-anchor-id="essi-formulas">ESSI Formulas</h2>
 <p>For simplicity, we assume 1:1 randomization and equal, marginal variances across the treatment arms. We also provide <a href="#appendix">ESSI formulas</a> that relax these assumptions.</p>
 <p>It turns out that the <strong>ESSI from covariate adjustment for continuous outcomes</strong> can be easily estimated since it only depends on two parameters:</p>
-<div class="callout-definition callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-General ESSI
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+</section>
+<section id="general-essi" class="level1 callout-definition">
+<h1>General ESSI</h1>
 <p><span id="eq-essi-gen"><span class="math display">\[
 General \space ESSI=\Bigg(\frac{1}{1 - \big(\frac{r_{control} \space + \space r_{active}}{2}\big)^2}-1\Bigg) * 100\%
 \tag{7}\]</span></span></p>
@@ -713,83 +725,67 @@ General \space ESSI=\Bigg(\frac{1}{1 - \big(\frac{r_{control} \space + \space r_
   r_{control} &amp;= \text{Correlation between the outcome and covariate in the control arm}
 \end{align*}
 \]</span></p>
-</div>
-</div>
+</section>
 <p>It makes intuitive sense that the ESSI depends on the squared average of the correlations in the two treatment arms, increasing as the correlations increase. The correlation between the covariate and the outcome among untreated patients (<span class="math inline">\(r_{control}\)</span>) can be estimated using historical trial data, observational cohorts, etc.</p>
 <p>This leaves <span class="math inline">\(r_{active}\)</span> as the only quantity left to estimate. To help estimate <span class="math inline">\(r_{active}\)</span>, note that the correlation between the outcome and the covariate in the treatment arm depends on the “treatment effect scenario.” Two plausible treatment effect scenarios are discussed in the following sections.</p>
 <section id="constant-absolute-treatment-effect" class="level3">
 <h3 class="anchored" data-anchor-id="constant-absolute-treatment-effect">Constant absolute treatment effect</h3>
 <p>One commonly assumed treatment effect scenario is that the <em>absolute</em> treatment effect is constant across the baseline covariate:</p>
-<div class="callout-definition callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Constant absolute treatment effect:
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="constant-absolute-treatment-effect-1" class="level1 callout-definition">
+<h1>Constant absolute treatment effect:</h1>
 <p><span class="math inline">\(E(Y_{active}|X)=E(Y_{control}|X)-\delta\)</span>, for some constant <span class="math inline">\(\delta\)</span>. With a constant absolute treatment effect, <span class="math inline">\(r_{control}=r_{active}\)</span>. Plugging this into the general ESSI formula we get</p>
 <p><span id="eq-essi-const-abs-delta"><span class="math display">\[
 ESSI \space Assuming \space Constant \space Absolute \space \delta =\Bigg(\frac{1}{1-r^2_{control}}-1\Bigg) * 100\%
 \tag{8}\]</span></span></p>
-</div>
-</div>
+</section>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-constant-ate" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-constant-ate-1.png" class="img-fluid figure-img" width="672"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;4: Constant Absolute Treatment Effect</figcaption><p></p>
+<div id="fig-constant-ate" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-constant-ate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-constant-ate-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-constant-ate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Constant Absolute Treatment Effect
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-</section>
 <section id="constant-proportional-treatment-effect" class="level3">
 <h3 class="anchored" data-anchor-id="constant-proportional-treatment-effect">Constant proportional treatment effect</h3>
 <p>A second plausible treatment effect scenario is that the <em>relative</em> treatment effect is constant across the baseline covariate:</p>
-<div class="callout-definition callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Constant proportional treatment effect
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="constant-proportional-treatment-effect-1" class="level1 callout-definition">
+<h1>Constant proportional treatment effect</h1>
 <p><span class="math inline">\(E(Y_{active}|X)=(1-\delta)E(Y_{control}|X)\)</span>, for some constant <span class="math inline">\(\delta\)</span>. With a constant proportional treatment effect, <span class="math inline">\(r_{active}=(1-\delta)r_{control}\)</span>. Plugging this into the general ESSI formula we get</p>
 <p><span id="eq-essi-const-prop-delta"><span class="math display">\[
 ESSI\space Assuming \space Constant \space Proportional \space \delta=\Bigg(\frac{1}{1-r^2_{control}\big(1-\frac{\delta}{2}\big)^2}-1\Bigg) * 100\%
 \tag{9}\]</span></span></p>
-</div>
-</div>
+</section>
 <div class="cell">
 <div class="cell-output-display">
-<div id="fig-constant-pte" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-constant-pte-1.png" class="img-fluid figure-img" width="672"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;5: Constant Proportional Treatment Effect</figcaption><p></p>
+<div id="fig-constant-pte" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-constant-pte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-constant-pte-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-constant-pte-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Constant Proportional Treatment Effect
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-</section>
-</section>
 <section id="impact-of-htes-on-gains-from-covariate-adjustment" class="level2">
 <h2 class="anchored" data-anchor-id="impact-of-htes-on-gains-from-covariate-adjustment">Impact of HTEs on gains from covariate adjustment</h2>
 <p>A constant proportional treatment effect is an example of HTEs. A treatment effect is heterogeneous if the magnitude of the treatment effect (on the absolute scale) depends on the value of the baseline covariate. <strong>HTEs decrease the precision gains from adjustment</strong>. For example, notice how, in the constant proportional treatment effect formula, the ESSI decreases as <span class="math inline">\(\delta\)</span> increases (i.e.&nbsp;as heterogeneity increases). It is important to recognize the impact of HTEs when making decisions about reducing sample size in anticipation of increased power due to covariate adjustment.</p>
-<div class="cell" data-layout-align="center">
-
-</div>
 </section>
 <section id="a-hypothetical-example" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="a-hypothetical-example">A Hypothetical Example</h2>
 <p>Suppose you are working on pre-specifying an adjusted analysis for an upcoming phase 2 trial. Assume that the targeted effect size is a <span class="math inline">\(25\%\)</span> reduction in mean decline in the treatment arm compared to the mean decline in the placebo arm for a progressive disease that has a continuous outcome measure. Furthermore, assume that you have developed a prognostic model using external/historical data and that the estimated correlation between the prognostic model predictions and the outcome was <span class="math inline">\(0.45\)</span> (<span class="math inline">\(r^2_{control}\approx0.2\)</span>). The following is an example of how to calculate ESSIs from covariate adjustment under two plausible treatment effect scenarios that are consistent with the targeted effect size:</p>
 <div class="column-body-outset">
-
 <table class="table tg">
 <thead>
 <tr>
@@ -851,37 +847,47 @@ No Correlation in Treatment Arm
 </td>
 </tr>
 </tbody>
-
 </table>
 </div>
 <p>Assuming a constant absolute delta, the effective sample size increase from covariate adjustment is expected to be <span class="math inline">\(25\%\)</span>. However, <em>with a constant proportional treatment effect (which implies HTEs), the ESSI decreases to <span class="math inline">\(18\%\)</span></em>. A third, not entirely unrealistic worst-case scenario of no correlation between the covariate and outcome in the active treatment arm reduces the ESSI to just <span class="math inline">\(5\%\)</span>. The drop in ESSI with HTEs would be an important caveat to communicate if there is a temptation to decrease trial sample size.</p>
 <p>All ESSI formulas assume a particular pattern of HTEs. Due to the risk of under-powering, if no prior data is available on HTEs, we do not routinely recommend reducing sample sizes for Phase 2 trials. Usually when designing a Phase 3 trial, there are data from earlier studies on HTEs that can be used to get direct estimates of HTEs and improve ESSI estimates. These improved ESSI estimates could be used to inform sample size reduction, if other trial requirements allow for it (e.g.&nbsp;safety and subgroup analyses). Whenever sample size is reduced, be sure to communicate these risks, consider the noise in ESSI estimates and study-to-study effects and tailor sample size reductions accordingly.</p>
 </section>
-</section>
 <section id="application-to-geographic-atrophy-ga" class="level1">
 <h1>Application to Geographic Atrophy (GA)</h1>
 <p>Geographic atrophy (GA) is an advanced form of age-related macular degeneration (AMD) and is a major cause of blindness in developed countries worldwide. GA progression is assessed by GA lesion growth from baseline over time using Fundus Autofluorescence (FAF) images. This is usually the primary endpoint in clinical trials that evaluate treatment effects on progression.</p>
-<div id="fig-ga-lesion-growth" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/ga_lesion_growth.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;6: GA lesion progression over time on an FAF image</figcaption><p></p>
+<div id="fig-ga-lesion-growth" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ga-lesion-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ga_lesion_growth.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ga-lesion-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: GA lesion progression over time on an FAF image
+</figcaption>
 </figure>
 </div>
 <p>Because GA progression is slow and varies between patients, clinical trials need to enroll many patients and follow them over a long period of time. Most recent GA trial designs followed patients for 12-18 months for the primary efficacy endpoint. However, the within patient noise of measuring GA progression over time is small and GA lesions progress linearly over the duration of the trial, making this a promising problem for a prediction model. This also allows us to use slopes calculated for each patient as the outcome for the prognostic modeling. Clinical trials often use change from baseline in GA area or slopes as outcomes, and sensitivity analyses showed that those are highly correlated and results are very similar for both. For simplicity, we will show the results for predicting the individual slopes.</p>
-<div id="fig-ga-indi-patients" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/ga_indiv_patients.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;7: Examples of GA lesion growth for individual patients</figcaption><p></p>
+<div id="fig-ga-indi-patients" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ga-indi-patients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ga_indiv_patients.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ga-indi-patients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Examples of GA lesion growth for individual patients
+</figcaption>
 </figure>
 </div>
 <section id="prognostic-model-development" class="level2">
 <h2 class="anchored" data-anchor-id="prognostic-model-development">Prognostic Model Development</h2>
 <p>The modeling and data strategy was pre-specified and allowed a rigorous and fair comparison of a number of models with different levels of complexity and operational burden. The goal was to find the least complex model with the best performance.</p>
 <p>Data from a previous GA development program was harmonized and divided into training, hold-out, and independent test sets as shown in the figure. The independent tests sets consisted of two studies that were entirely excluded from the training and hold-out evaluations. Within the training data set, models were trained using additional re-sampling techniques for parameter tuning and performance estimation.</p>
-<div id="fig-ga-data-strategy" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/ga_data_strategy.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;8: Data Strategy for Model Development</figcaption><p></p>
+<div id="fig-ga-data-strategy" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ga-data-strategy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ga_data_strategy.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ga-data-strategy-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Data Strategy for Model Development
+</figcaption>
 </figure>
 </div>
 <p>During training a model was selected from each of three model groups for hold-out and independent test set evaluation. These model groups were defined as:</p>
@@ -906,10 +912,14 @@ No Correlation in Treatment Arm
 <li>Model Group 3 (DL Models): A multi-task DL (CNN) model that uses a single FAF image as input to predict GA lesion size (same image) and GA growth rate <span class="citation" data-cites="DLpaper">(<a href="#ref-DLpaper" role="doc-biblioref">Anegondi et al. 2022</a>)</span>.</li>
 </ul>
 <p>The results were quite impressive; although operationally complex to implement, the run-in model appears to effectively increase the sample size by <span class="math inline">\(1/3\)</span> compared to an analysis using the benchmark model. If no DL FAF model were available, the additional complexity of the run-in might be justified by the <span class="math inline">\(ESSI\)</span>. However, the DL FAF model outperformed the benchmark and even the benchmark+run-in model in the hold-out as well as the two independent test sets <span class="citation" data-cites="DLpaper">(<a href="#ref-DLpaper" role="doc-biblioref">Anegondi et al. 2022</a>)</span>. This implies that the logistical complexities of the run-in model can be avoided with the DL FAF model, which is based on a single baseline time point and is still relatively simple to implement <span class="citation" data-cites="DLpaper">(<a href="#ref-DLpaper" role="doc-biblioref">Anegondi et al. 2022</a>)</span>. The table shows that the DL FAF model substantially increases the ESSI by at least 90% when compared to an unadjusted analysis and by 40%-80% compared to a simple adjustment using the known baseline features.</p>
-<div id="fig-ga-model-results" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/ga_model_results.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;9: Results from selected model per group</figcaption><p></p>
+<div id="fig-ga-model-results" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ga-model-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ga_model_results.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ga-model-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Results from selected model per group
+</figcaption>
 </figure>
 </div>
 </section>
@@ -917,16 +927,24 @@ No Correlation in Treatment Arm
 <h2 class="anchored" data-anchor-id="model-in-action">Model in Action</h2>
 <p>The MAHALO study independent test set shown in the previous section was the Phase 2 trial for Lampalizumab. There was an observed treatment effect of ∼20% slowing progression in the higher dose (LQ4 - monthly treatment) compared to the Sham (no treatment) arm. This effect was not confirmed by the two large global Phase 3 trials (SPECTRI and CHROMA), so in retrospect we know this was a false-positive result. When the decision was made to move forward with a Phase 3 trial, the DL FAF model was not available. However, it is an interesting post-hoc exercise to see how results from the Phase 2 trial would have changed had the DL FAF model been used for covariate adjustment.</p>
 <p>The figure below shows the estimated mean changes in GA lesion size with and without adjusting for the FAF DL model. Covariate adjustment leads to better precision and hence tighter confidence intervals for the treatment effect estimate and also changes the estimate in case of imbalances. In this example, the estimate changes (from 20% to 6%) and becomes non-significant (a p-value threshold of 0.2 is usually used in a Phase 2 trial).</p>
-<div id="fig-ga-mahalo-ex" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/ga_mahalo_example.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;10: GA progression over time by treatment arm for unadjusted and adjusted analysis</figcaption><p></p>
+<div id="fig-ga-mahalo-ex" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ga-mahalo-ex-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ga_mahalo_example.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ga-mahalo-ex-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: GA progression over time by treatment arm for unadjusted and adjusted analysis
+</figcaption>
 </figure>
 </div>
-<div id="fig-ga-mahalo-cis" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/ga_mahalo_cis.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;11: Treatment effect estimates</figcaption><p></p>
+<div id="fig-ga-mahalo-cis" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ga-mahalo-cis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/ga_mahalo_cis.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ga-mahalo-cis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: Treatment effect estimates
+</figcaption>
 </figure>
 </div>
 <p>While there were many other considerations in the decision to move into Phase 3 trials (e.g.&nbsp;subgroup analyses), if results from the adjusted analysis had been available, Phase 3 decision making may have been different.</p>
@@ -985,10 +1003,14 @@ No Correlation in Treatment Arm
 <li><span class="math inline">\(k=\frac{\sigma_{Y_{active}}}{\sigma_{Y_{control}}}\)</span></li>
 <li><span class="math inline">\(\pi=Probability\;of\;active\;treatment\)</span>. Note, when <span class="math inline">\(\pi=1/2\)</span> the ESSI corresponding to the additive model will always equal the ESSI corresponding to the interaction model.</li>
 </ul>
-<div id="fig-essi-formulas" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/essi_formulas.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;12: ESSI Formulas</figcaption><p></p>
+<div id="fig-essi-formulas" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-essi-formulas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/essi_formulas.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-essi-formulas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: ESSI Formulas
+</figcaption>
 </figure>
 </div>
 </section>
@@ -1104,7 +1126,7 @@ No Correlation in Treatment Arm
 <span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(t, <span class="at">align =</span> <span class="st">"cc"</span>, <span class="at">caption =</span> <span class="st">"Superpopulation Sampling Framework"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Superpopulation Sampling Framework</caption>
 <colgroup>
 <col style="width: 15%">
@@ -1121,28 +1143,22 @@ No Correlation in Treatment Arm
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">True SE</td>
-<td style="text-align: center;">0.0212218</td>
-<td style="text-align: center;">0.0212169</td>
+<td style="text-align: center;">0.0214373</td>
+<td style="text-align: center;">0.0214312</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Mean TMLE SE</td>
-<td style="text-align: center;">0.0211724</td>
-<td style="text-align: center;">0.0211713</td>
+<td style="text-align: center;">0.0211753</td>
+<td style="text-align: center;">0.0211741</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Mean HW SE</td>
-<td style="text-align: center;">0.0211750</td>
-<td style="text-align: center;">0.0154901</td>
+<td style="text-align: center;">0.0211780</td>
+<td style="text-align: center;">0.0154906</td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-<div class="cell">
-
-</div>
-<div class="cell">
-
 </div>
 </section>
 </section>
@@ -1153,123 +1169,126 @@ No Correlation in Treatment Arm
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
-<div id="ref-DLpaper" class="csl-entry" role="doc-biblioentry">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-DLpaper" class="csl-entry" role="listitem">
 Anegondi, Neha, Simon S. Gao, Verena Steffen, Richard F. Spaide, SriniVas R. Sadda, Frank G. Holz, Christina Rabe, et al. 2022. <span>“Deep Learning to Predict Geographic Atrophy Area and Growth Rate from Multi-Modal Imaging.”</span> <em>Ophthalmology Retina</em>. <a href="https://doi.org/10.1016/j.oret.2022.08.018">https://doi.org/10.1016/j.oret.2022.08.018</a>.
 </div>
-<div id="ref-covid" class="csl-entry" role="doc-biblioentry">
+<div id="ref-covid" class="csl-entry" role="listitem">
 Benkeser, David, Ivan Diaz, Alex Luedtke, Jodi Segal, Daniel Scharfstein, and Michael Rosenblum. 2020. <span>“Improving Precision and Power in Randomized Trials for COVID-19 Treatments Using Covariate Adjustment, for Binary, Ordinal, and Time-to-Event Outcomes.”</span> <em>Biometrics</em>.
 </div>
-<div id="ref-Colantuoni2015" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Colantuoni2015" class="csl-entry" role="listitem">
 Colantuoni, Elizabeth, and Michael Rosenblum. 2015. <span>“Leveraging Prognostic Baseline Variables to Gain Precision in Randomized Trials.”</span> <em>Stat. Med</em>.
 </div>
-<div id="ref-Daniel" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Daniel" class="csl-entry" role="listitem">
 Daniel, Rhian, Jingjing Zhang, and Daniel Farewell. 2020. <span>“Making Apples from Oranges: Comparing Noncollapsible Effect Estimators and Their Standard Errors After Adjustment for Different Covariate Sets.”</span> <em>Biometrical Journal</em>.<a href=" https://doi.org/10.1002/bimj.201900297"> https://doi.org/10.1002/bimj.201900297</a>.
 </div>
-<div id="ref-CUPED" class="csl-entry" role="doc-biblioentry">
+<div id="ref-CUPED" class="csl-entry" role="listitem">
 Deng, Alex, Ya Xu, Ron Kohavi, and Toby Walker. 2013. <span>“Improving the Sensitivity of Online Controlled Experiments by Utilizing Pre-Experiment Data.”</span> <em>WSDM</em>.
 </div>
-<div id="ref-Peng" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Peng" class="csl-entry" role="listitem">
 Ding, Peng, Xinran Li, and Luke Miratrix. 2017. <span>“Bridging Finite and Super Population Causal Inference.”</span> <em>J. Causal Infer.</em>
 </div>
-<div id="ref-Ding" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Ding" class="csl-entry" role="listitem">
 ———. 2019. <span>“Rerandomization and Regression Adjustment.”</span> <em>arXiv</em>. <a href="https://arxiv.org/abs/1906.11291">https://arxiv.org/abs/1906.11291</a>.
 </div>
-<div id="ref-FDA" class="csl-entry" role="doc-biblioentry">
+<div id="ref-FDA" class="csl-entry" role="listitem">
 FDA, U. S. 2021. <span>“Adjusting for Covariates in Randomized Clinical Trials for Drugs and Biological Products Guidance for Industry.”</span> <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products">https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products</a>.
 </div>
-<div id="ref-Freedman2008a" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Freedman2008a" class="csl-entry" role="listitem">
 Freedman, D. A. 2008a. <span>“Randomization Does Not Justify Logistic Regression.”</span> <em>Statistical Science</em>, 2008a.
 </div>
-<div id="ref-Freedman2008b" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Freedman2008b" class="csl-entry" role="listitem">
 Freedman, David A. 2008b. <span>“ON REGRESSION ADJUSTMENTS IN EXPERIMENTS WITH SEVERAL TREATMENTS.”</span> <em>The Annals of Applied Statistics</em>, 2008b.
 </div>
-<div id="ref-Ge2011" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Ge2011" class="csl-entry" role="listitem">
 Ge, Miaomiao, L. Kathryn Durham, R. Daniel Meyer, Wangang Xie, and Neal Thomas. 2011. <span>“Covariate-Adjusted Difference in Proportions from Clinical Trials Using Logistic Regression and Weighted Risk Differences.”</span> <em>Drug Information Journal</em>.
 </div>
-<div id="ref-MLRATE" class="csl-entry" role="doc-biblioentry">
+<div id="ref-MLRATE" class="csl-entry" role="listitem">
 Guo, Yongyi, Dominic Coey, Mikael Konutgan an Wenting Li, Chris Schoener, and Matt Goldman. 2022. <span>“Machine Learning for Variance Reduction in Online Experiments.”</span> <em>arXiv</em>.
 </div>
-<div id="ref-rms" class="csl-entry" role="doc-biblioentry">
+<div id="ref-rms" class="csl-entry" role="listitem">
 Harrell, Frank E. 2011. <em>Regression Modeling Strategies</em>. New York: Springer.
 </div>
-<div id="ref-imbens" class="csl-entry" role="doc-biblioentry">
+<div id="ref-imbens" class="csl-entry" role="listitem">
 Imbens, Guido, and Jeffrey Wooldridge. 2009. <span>“Recent Developments in the Econometrics of Program Evaluation.”</span> <em>J. Econ. Lit</em>.
 </div>
-<div id="ref-CUPAC" class="csl-entry" role="doc-biblioentry">
+<div id="ref-CUPAC" class="csl-entry" role="listitem">
 Li, Jeff, Yixin Tang, and Jared Bauman. 2020. <span>“Improving Experimental Power Through Control Using Predictions as Covariates.”</span> <a href="https://doordash.engineering/2020/06/08/improving-experimental-power-through-control-using-predictions-as-covariate-cupac/" class="uri">https://doordash.engineering/2020/06/08/improving-experimental-power-through-control-using-predictions-as-covariate-cupac/</a>.
 </div>
-<div id="ref-lin2013" class="csl-entry" role="doc-biblioentry">
+<div id="ref-lin2013" class="csl-entry" role="listitem">
 Lin, Winston. 2013. <span>“Agnsotic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman’s Critique.”</span> <em>The Annals of Applied Statistics</em>.
 </div>
-<div id="ref-Riley2019" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Riley2019" class="csl-entry" role="listitem">
 Riley, Richard D, Kym Snell, Joie Ensor, Danielle Burke, Frank Harrell, Karel Moons, and Gary Collins. 2019. <span>“Minimum Sample Size for Developing a Multivariable Prediction Model: Part i - Continuous Outcomes.”</span> <em>Stat. Med.</em>
 </div>
-<div id="ref-Riley2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Riley2020" class="csl-entry" role="listitem">
 Riley, Richard, Joie Ensor, Kym Snell, Frank Harrell, Glen Martin, Johannes Reitsma associate, Karel Moons, Gary Collins, and Maarten van Smeden. 2020. <span>“Calculating the Sample Size Required for Developing a Clinical Prediction Model.”</span> <em>BMJ</em>.
 </div>
-<div id="ref-ML" class="csl-entry" role="doc-biblioentry">
+<div id="ref-ML" class="csl-entry" role="listitem">
 Rosenblum, Michael. 2020. <span>“Machine Learning for Leveraging Prognostic Baseline Variables to Gain Precision and Reduce Sample Size in Randomized Trials.”</span> <span class="smallcaps">url:</span>&nbsp;<a href="http://rosenblum.jhu.edu/" class="uri">http://rosenblum.jhu.edu/</a>.
 </div>
-<div id="ref-TMLE2010" class="csl-entry" role="doc-biblioentry">
+<div id="ref-TMLE2010" class="csl-entry" role="listitem">
 Rosenblum, Michael, and Mark J. van der Laan. 2010. <span>“Simple, Efficient Estimators of Treatment Effects in Randomized Trials Using Generalized Linear Models to Leverage Baseline Variables.”</span> <em>The International Journal of Biostatistics</em>.
 </div>
-<div id="ref-Rosenblum2009" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Rosenblum2009" class="csl-entry" role="listitem">
 Rosenblum, Michael, and Mark van der Laan. 2009. <span>“Using Regression Models to Analyze Randomized Trials: Asymptotically Valid Hypothesis Tests Despite Incorrectly Specified Models.”</span> <em>Biometrics</em>.
 </div>
-<div id="ref-Steingrimsson2016" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Steingrimsson2016" class="csl-entry" role="listitem">
 Rosenblum, Michael, and Jon Steingrimsson. 2016. <span>“Matching the Efficiency Gains of the Logistic Regression Estimator While Avoiding Its Interpretability Problems, in Randomized Trials.”</span> <em>Johns Hopkins University, Dept. Of Biostatistics Working Papers.</em>
 </div>
-<div id="ref-Rudin" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Rudin" class="csl-entry" role="listitem">
 Rudin, Cynthia. 2019. <span>“Stop Explaining Black Box Machine Learning Models for High Stakes Decisions and Use Interpretable Models Instead.”</span> <em>Nat Mach Intell</em>. <a href="https://doi.org/10.1038/s42256-019-0048-x">https://doi.org/10.1038/s42256-019-0048-x</a>.
 </div>
-<div id="ref-unlearn" class="csl-entry" role="doc-biblioentry">
+<div id="ref-unlearn" class="csl-entry" role="listitem">
 Schuler, Alejandro, David Walsh, Diana Hall, Jon Walsh, and Charles Fisher. 2020. <span>“Increasing the Efficiency of Randomized Trial Estimates via Linear Adjustment for a Prognostic Score.”</span> <em>arXiv</em>.
 </div>
-<div id="ref-Senn" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Senn" class="csl-entry" role="listitem">
 Senn, S. J. 1989. <span>“Covariate Imbalance and Random Allocation in Clinical Trials.”</span> <em>Statistics in Medicine</em>.
 </div>
-<div id="ref-Senn2010" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Senn2010" class="csl-entry" role="listitem">
 Senn, Stephen. 2010. <span>“Some Considerations Concerning Covariates in Clinical Trials.”</span> <span class="smallcaps">url:</span>&nbsp;<a href="https://www.page-meeting.org/pdf_assets/9236-SennCovariates.pdf" class="uri">https://www.page-meeting.org/pdf_assets/9236-SennCovariates.pdf</a>.
 </div>
-<div id="ref-Dichotomania" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Dichotomania" class="csl-entry" role="listitem">
 Senn, Stephen J. 2005. <span>“Dichotomania: An Obsessive Compulsive Disorder That Is Badly Affecting the Quality of Analysis of Pharmaceutical Trials.”</span> In.
 </div>
-<div id="ref-Tian2012" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Tian2012" class="csl-entry" role="listitem">
 Tian, Lu, Tianxi Cai, Lihui Zhao, and Lee-Jen Wei. 2012. <span>“On the Covariate-Adjusted Estimation for an Overall Treatment Difference with Data from a Randomized Comparative Clinical Trial.”</span> <em>Biostatistics</em>.
 </div>
-<div id="ref-owkin" class="csl-entry" role="doc-biblioentry">
+<div id="ref-owkin" class="csl-entry" role="listitem">
 Trower, Antonia, Felix Balazard, and Radha Patel. 2020. <span>“Leveraging Machine Learning to Optimize Clinical Trials: The Power of Covariate Adjustment.”</span> <a href="https://owkin.com/publications-and-news/blogs/leveraging-machine-learning-to-optimize-clinical-trials-the-power-of-covariate-adjustment">https://owkin.com/publications-and-news/blogs/leveraging-machine-learning-to-optimize-clinical-trials-the-power-of-covariate-adjustment</a>.
 </div>
-<div id="ref-Tsiatis2008" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Tsiatis2008" class="csl-entry" role="listitem">
 Tsiatis, Anastasios A., Marie Davidian, Min Zhang, and Xiaomin Lu. 2008. <span>“Covariate Adjustment for Two-Sample Treatment Comparisons in Randomized Clinical Trials: A Principled yet Flexible Approach.”</span> <em>Stat. Med.</em>
 </div>
-<div id="ref-Wang2021" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Wang2021" class="csl-entry" role="listitem">
 Wang, Bingkai, Ryoko Susukida, Ramin Mojtabai, Masoumeh Amin-Esmaeili, and Michael Rosenblum. 2021. <span>“Model-Robust Inference for Clinical Trials That Improve Precision by Stratified Randomization and Covariate Adjustment.”</span> <em>Journal of the American Statistical Association</em>.
 </div>
-<div id="ref-covid2" class="csl-entry" role="doc-biblioentry">
+<div id="ref-covid2" class="csl-entry" role="listitem">
 Williams, Nicholas, Michael Rosenblum, and Ivan Diaz. 2021. <span>“Optimizing Precision and Power by Machine Learning in Randomized Trials, with an Application to COVID-19.”</span> <em>arXiv Preprint arXiv:2109.04294.</em>
 </div>
-<div id="ref-jackknife" class="csl-entry" role="doc-biblioentry">
+<div id="ref-jackknife" class="csl-entry" role="listitem">
 Wolbers, Marcel, Alessandro Noci, Paul Delmar, Craig Gower-Page, Sean Yiu, and Jonathan W. Bartlett. 2022. <span>“Standard and Reference-Based Conditional Mean Imputation.”</span> <em>Pharmaceutical Statistics</em>. <a href="https://doi.org/10.1002/pst.2234">https://doi.org/10.1002/pst.2234</a>.
 </div>
-<div id="ref-Netflix" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Netflix" class="csl-entry" role="listitem">
 Wong, Jeffrey, Randall Lewis, and Matthew Wardrop. 2019. <span>“Efficient Computation of Linear Model Treatment Effects in an Experimentation Platform.”</span> <em>arXiv</em>.
 </div>
-<div id="ref-Tsiatis2001" class="csl-entry" role="doc-biblioentry">
+<div id="ref-Tsiatis2001" class="csl-entry" role="listitem">
 Yang, Li, and Anastasios A. Tsiatis. 2001. <span>“Efficiency Study of Estimators in a Pretest-Posttest Trial.”</span> <em>The American Statistician</em>.
 </div>
-</div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{schiffman,michelfriesenhahnandchristinarabe,
-  author = {Courtney Schiffman, Michel Friesenhahn and Christina Rabe},
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{schiffman, christina rabe and michel friesenhahn2022,
+  author = {Schiffman, Christina Rabe and Michel Friesenhahn, Courtney},
   title = {How to Get the Most Out of Prognostic Baseline Variables in
-    Clinical Trials},
-  url = {https://www.stats4datascience.com/posts/covariate_adjustment/},
+    Clinical Trials. {Effective} Strategies for Employing Covariate
+    Adjustment and Stratification.},
+  date = {},
+  url = {https://www.go.roche.com/stats4datascience},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman,michelfriesenhahnandchristinarabe" class="csl-entry quarto-appendix-citeas" role="doc-biblioentry">
-Courtney Schiffman, Michel Friesenhahn and Christina Rabe. n.d.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman, christina rabe and michel friesenhahn2022" class="csl-entry quarto-appendix-citeas" role="listitem">
+Schiffman, Christina Rabe and Michel Friesenhahn, Courtney. n.d.
 <span>“How to Get the Most Out of Prognostic Baseline Variables in
-Clinical Trials.”</span> <a href="https://www.stats4datascience.com/posts/covariate_adjustment/">https://www.stats4datascience.com/posts/covariate_adjustment/</a>.
+Clinical Trials. Effective Strategies for Employing Covariate Adjustment
+and Stratification.”</span> <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1298,9 +1317,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -1336,10 +1369,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1349,8 +1381,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1365,6 +1406,238 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -1405,6 +1678,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Michel Friesenhahn">
+<meta name="author" content="Christina Rabe">
+<meta name="author" content="Courtney Schiffman">
+<meta name="dcterms.date" content="2023-10-31">
+
+<title>stats4datascience - Everything you wanted to know about R2 but were afraid to ask</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../assets/styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/favicon.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">stats<span class="fancy-four">4</span>datascience</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Everything you wanted to know about R<sup>2</sup> but were afraid to ask</h1>
+            <p class="subtitle lead">Part 2: Binary outcomes and generalizing the fundamental decomposition</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">machine learning</div>
+                <div class="quarto-category">model perormance</div>
+              </div>
+                  </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author">Michel Friesenhahn <a href="mailto:friesenhahn.michel@gene.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              <a href="https://www.gene.com/">
+              Genentech
+              </a>
+            </p>
+        </div>
+      <div class="quarto-title-meta-contents">
+      <p class="author">Christina Rabe <a href="mailto:rabe.christina@gene.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              <a href="https://www.gene.com/">
+              Genentech
+              </a>
+            </p>
+        </div>
+      <div class="quarto-title-meta-contents">
+      <p class="author">Courtney Schiffman <a href="mailto:schiffman.courtney@gene.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              <a href="https://www.gene.com/">
+              Genentech
+              </a>
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 31, 2023</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">February 21, 2024</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#binary-outcomes" id="toc-binary-outcomes" class="nav-link active" data-scroll-target="#binary-outcomes">Binary Outcomes</a></li>
+  <li><a href="#scoring-rules" id="toc-scoring-rules" class="nav-link" data-scroll-target="#scoring-rules">Scoring Rules</a></li>
+  <li><a href="#generalized-fundamental-decomposition" id="toc-generalized-fundamental-decomposition" class="nav-link" data-scroll-target="#generalized-fundamental-decomposition">Generalized Fundamental Decomposition</a></li>
+  <li><a href="#generalized-fundamental-decomposition-1" id="toc-generalized-fundamental-decomposition-1" class="nav-link" data-scroll-target="#generalized-fundamental-decomposition-1">Generalized Fundamental Decomposition</a></li>
+  <li><a href="#comments-on-log-loss" id="toc-comments-on-log-loss" class="nav-link" data-scroll-target="#comments-on-log-loss">Comments on log loss</a></li>
+  <li><a href="#comments-on-misclassification-error" id="toc-comments-on-misclassification-error" class="nav-link" data-scroll-target="#comments-on-misclassification-error">Comments on misclassification error</a></li>
+  <li><a href="#pseudo-r2" id="toc-pseudo-r2" class="nav-link" data-scroll-target="#pseudo-r2">Pseudo <span class="math inline">\(R^2\)</span></a></li>
+  <li><a href="#summarykey-points" id="toc-summarykey-points" class="nav-link" data-scroll-target="#summarykey-points">Summary/Key Points</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+
+<center>
+<img src="images/BlogPic.png" id="fig-magnify" class="img-fluid" style="width:60.0%">
+</center>
+<p><span class="math display">\[\\[.02in]\]</span> Below is the second part of a two part post on model performance evaluation and the fundamental decomposition of <span class="math inline">\(R^2\)</span>. <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics/">Part 1 of this post</a> discussed how the general quality of predictions is assessed by accuracy, calibration, and discrimination. An approach was proposed that unifies these concepts via a scaled decomposition of accuracy into miscalibration and discrimination, <span class="math inline">\(R^2 = \mathrm{DI} - \mathrm{MI}\)</span>. In Part 1 it was discovered that the three key metrics are <span class="math inline">\(R^2\)</span>, <span class="math inline">\(r^2\)</span>, and <span class="math inline">\(\mathrm{DI}\)</span>, that they satisfy a key inequality, <span class="math inline">\(R^2 \leq r^2 \leq DI\)</span> and that <span class="math inline">\(R^2\)</span> can indeed be negative!</p>
+<p>We now discuss the binary outcome setting and how the fundamental decompostion can be generalized…</p>
+<section id="binary-outcomes" class="level1">
+<h1>Binary Outcomes</h1>
+<p>When outcomes are binary, <span class="math inline">\(Y\in\{0,1\}\)</span>, <strong>the metrics and decomposition discussed in <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics/">Part 1 of this post</a> that were based on quadratic loss still apply without change</strong>. Importantly, the interpretations of the metrics hold for binary outcomes as well:</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretations of <span class="math inline">\(R^2\)</span> and <span class="math inline">\(DI\)</span> as Proportions of Explained Uncertainty
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p><span class="math inline">\(\mathrm{DI}\)</span> is the proportion of variability in the observed outcomes explained by recalibrated predictions.</p></li>
+<li><p>If predictions are calibrated, then <span class="math inline">\(R^2 = \mathrm{DI}=Var(C(\hat{Y})) / Var(Y)= Var(\hat{Y}) / Var(Y)\)</span>, so <span class="math inline">\(R^2\)</span> is the proportion of variability in the observed outcomes explained by the predictions.</p></li>
+<li><p>If predictions are not calibrated, then <span class="math inline">\(R^2\)</span> cannot be interpreted as the proportion of variability in the observed outcomes explained by the predictions.</p></li>
+<li><p><span class="math inline">\(R^2\)</span> is always the proportional reduction of <span class="math inline">\(\mathrm{MSE}\)</span> relative to the best constant prediction, <span class="math inline">\(\mathbb{E}(Y)\)</span>.</p></li>
+</ul>
+<p><strong>These interpretations still apply when outcomes are binary and take values in {0, 1}</strong>!</p>
+</div>
+</div>
+<p>Recall that quadratic loss is a strictly proper scoring rule (defined in more detail below). Remarkably, it has been shown that the decomposition into miscalibration and discrimination applies more generally to all strictly proper scoring rules, not just quadratic loss, and still retains its general interpretation <span class="citation" data-cites="Brocker">(<a href="#ref-Brocker" role="doc-biblioref">Brocker, 2009</a>)</span>. An alternative strictly proper scoring rule that is commonly used for binary outcomes is the log loss–sometimes referred to as cross entropy.</p>
+</section>
+<section id="scoring-rules" class="level1 page-columns page-full">
+<h1>Scoring Rules</h1>
+<p>A <strong>scoring rule</strong> takes a predicted outcome <span class="math inline">\(\hat{y}\)</span> and a realized outcome <span class="math inline">\(y\)</span> and assigns a real valued score <span class="math inline">\(s(\hat{y}, y)\)</span>. Scoring rules can have negative or positive orientation, where negative orientation refers to larger scores representing worse discrepancies between <span class="math inline">\(\hat{y}\)</span> and <span class="math inline">\(y\)</span>. We assume negative orientation so that scores represent a loss. The <strong>score</strong>, <span class="math inline">\(S(\hat{Y}, Y)\)</span> is defined as the expected value of the scoring rule, <span class="math inline">\(\mathbb{E}[s(\hat{Y}, Y)]\)</span>. For example, <span class="math inline">\(\mathrm{MSE}\)</span> is the score based on the quadratic loss scoring rule. In the binary outcome setting, <span class="math inline">\(\mathrm{MSE}\)</span> is often called the Brier Score, first proposed in 1950 for applications in meteorology <span class="citation" data-cites="Brier1950">(<a href="#ref-Brier1950" role="doc-biblioref">Brier, 1950</a>)</span>.</p>
+<p>A scoring rule is <strong>proper</strong> if the score based on that scoring rule is optimized at <span class="math inline">\(\mathbb{E}[Y]\)</span>. It is strictly proper if it is uniquely optimized there. In other words, scores that are based on strictly proper scoring rules are optimized when predictions are equal to the true expected values (probabilities in the case of binary outcomes), so strictly proper scoring rules incentivize accurate predictions.</p>
+<p>Any score that is based on a strictly proper scoring rule can be decomposed into calibration and discrimination components. To show this, we first define the following terms which are also shown mathematically in <a href="#tbl-scorerules" class="quarto-xref">Table&nbsp;1</a>. This is simply meant to be a brief sketch of these concepts, and for more details see <span class="citation" data-cites="Brocker">Brocker (<a href="#ref-Brocker" role="doc-biblioref">2009</a>)</span>:</p>
+<ol type="1">
+<li><p>Uncertainty: <span class="math inline">\(S(\mathbb{E}(Y),Y)\)</span>. Uncertainty is the score evaluated at the constant prediction <span class="math inline">\(\hat{y}=\mathbb{E}(Y)\)</span>. In general, uncertainty measures the spread of the outcomes and does not depend on the prediction model. When the scoring rule is quadratic loss, uncertainty is the variance of <span class="math inline">\(Y\)</span> which is simply <span class="math inline">\(\mathbb{E}(Y)(1-\mathbb{E}(Y))=p(1-p)\)</span> for binary outcomes. When the scoring rule is log loss, uncertainty is the same as Shannon’s information entropy. <a href="#fig-uncertainty" class="quarto-xref">Figure&nbsp;1</a> shows uncertainty as a function of <span class="math inline">\(\mathbb{E}(Y)\)</span> for quadratic and log loss scoring rules. These functions are both unimodal and symmetric about <span class="math inline">\(\mathbb{E}(Y) = \frac{1}{2}\)</span>, with minimum of zero uncertainty at the two extremes of <span class="math inline">\(\mathbb{E}(Y)\)</span> equal to 0 or 1.</p></li>
+<li><p>Miscalibration: <span class="math inline">\(S(\hat{Y},Y) - S(C(\hat{Y}),Y)\)</span>. Miscalibration is the difference between scores evaluated at the original and recalibrated predictions. It is also often referred to as reliability. Using language from information geometry, miscalibration is the expected divergence between the predictions, <span class="math inline">\(\hat{Y}\)</span>, and the recalibrated predictions, <span class="math inline">\(C(\hat{Y})\)</span>. In information geometry, expected divergence is a type of statistical distance, so miscalibration measures the distance between the original and recalibrated predictions. For quadratic loss, the divergence is simply squared Euclidean distance; for log loss, the divergence is Kullback-Leibler divergence.</p></li>
+<li><p>Discrimination: <span class="math inline">\(S(E(Y),Y) - S(C(\hat{Y}),Y)\)</span>. Discrimination, also often referred to as resolution, measures the distance between the best constant prediction <span class="math inline">\(\mathbb{E}(Y)\)</span> and the recalibrated predictions. Therefore, discrimination is a measure of spread in the recalibrated predictions about <span class="math inline">\(\mathbb{E}(Y)\)</span>. For quadratic loss, this measure of spread is simply the variance of the recalibrated predictions; for log loss, it is the Kullback-Leibler divergence between the constant prediction of <span class="math inline">\(\mathbb{E}(Y)\)</span> relative to the recalibrated predictions. Note that Uncertainty, <span class="math inline">\(S(E(Y),Y)\)</span>, which is the first term of the difference, is not affected by the prediction model. The second term of the difference, <span class="math inline">\(S(C(\hat{Y}),Y)\)</span>, is minimized and thus discrimination is maximized when recalibrated predictions are at the extremes of 0 or 1. Intuitively this makes sense since we would want to say that a model with many calibrated predicted probabilities close to the extremes is able to discriminate well between observations.</p></li>
+</ol>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-uncertainty" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-uncertainty-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-uncertainty-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-uncertainty-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Uncertainty for quadratic and log loss scoring rules
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="column-page-inset">
+<div id="tbl-scorerules" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-scorerules-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Miscalibration, discrimination and uncertainty under general, squared error and log loss scoring rules
+</figcaption>
+<div aria-describedby="tbl-scorerules-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">General</th>
+<th style="text-align: center;">Quadratic Loss</th>
+<th style="text-align: center;">Log Loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>Scoring rule</strong></td>
+<td style="text-align: center;"><span class="math inline">\(s(\hat{y},y)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((\hat{y}-y)^2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-[y*log(\hat{y})+(1-y)*log(1-\hat{y})]\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Score</strong></td>
+<td style="text-align: center;"><span class="math inline">\(\mathbb{E}[s(\hat{Y},Y)]\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\mathbb{E}[(\hat{Y}-Y)^2]\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-\mathbb{E}[Y*log(\hat{Y})+(1-Y)*log(1-\hat{Y})]\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Uncertainty</strong></td>
+<td style="text-align: center;"><span class="math inline">\(S(\mathbb{E}(Y),Y)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\mathbb{E}(Y)(1-\mathbb{E}(Y))\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-[\mathbb{E}(Y)*log(\mathbb{E}(Y))+(1-\mathbb{E}(Y))*log(1-\mathbb{E}(Y))]\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Miscalibration</strong></td>
+<td style="text-align: center;"><span class="math inline">\(S(\hat{Y},Y)-S(C(\hat{Y}),Y)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\mathbb{E}[(\hat{Y}-C(\hat{Y}))^2]\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-\mathbb{E}\Big[C(\hat{Y})*log\Big(\frac{\hat{Y}}{C(\hat{Y})}\Big)+(1-C(\hat{Y}))*log\Big(\frac{1-\hat{Y}}{1-C(\hat{Y})}\Big)\Big]\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Discrimination</strong></td>
+<td style="text-align: center;"><span class="math inline">\(S(\mathbb{E}(Y),Y)-S(C(\hat{Y}),Y)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(Var(C(\hat{Y}))\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(-\mathbb{E}[C(\hat{Y})*log\Big(\frac{\mathbb{E}(Y)}{C(\hat{Y})}\Big)+(1-C(\hat{Y}))*log\Big(\frac{1-\mathbb{E}(Y)}{1-C(\hat{Y})}\Big)]\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="generalized-fundamental-decomposition" class="level1">
+<h1>Generalized Fundamental Decomposition</h1>
+<p>For strictly proper scoring rules, the Fundamental Decomposition <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics/">discussed in Part 1 of this post</a> can then be generalized to:</p>
+</section>
+<section id="generalized-fundamental-decomposition-1" class="level1 callout-definition">
+<h1>Generalized Fundamental Decomposition</h1>
+<p><span id="eq-gendecomp"><span class="math display">\[
+\begin{align}
+R^2 = DI - MI
+\end{align}
+\tag{1}\]</span></span> where</p>
+<p><span class="math inline">\(R^2 = 1 - \frac{S(\hat{Y},Y)}{S(\mathbb{E}(Y),Y)}\)</span></p>
+<p><span class="math inline">\(DI=\frac{S(E(Y),Y) - S(C(\hat{Y}),Y)}{S(\mathbb{E}(Y),Y)}\)</span></p>
+<p><span class="math inline">\(MI=\frac{S(\hat{Y},Y) - S(C(\hat{Y}),Y)}{S(\mathbb{E}(Y),Y)}\)</span></p>
+</section>
+<p>Note that <span class="math inline">\(R^2\)</span> is simply the score expressed as a <strong>skill score</strong> for the prediction model relative to the optimal null model <span class="citation" data-cites="Fissler">(<a href="#ref-Fissler" role="doc-biblioref">Fissler et al., 2022</a>)</span>.</p>
+<p>With the metrics and decomposition now defined under a general proper scoring rule, we re-emphasize that all properties described in the preceding sections still apply for log loss scoring. In addition, the interpretations of the metrics <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics/">discussed previously in Part 1 of this post</a> also apply with suitable modifications:</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretations of <span class="math inline">\(R^2\)</span> and <span class="math inline">\(DI\)</span> for any proper scoring rule
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p><span class="math inline">\(\mathrm{DI}\)</span> is the spread of the recalibrated predictions divided by the spread of the original outcomes. Therefore, it can be interpreted as the proportion of uncertainty explained by the recalibrated predictions</p></li>
+<li><p>If predictions are calibrated, then <span class="math inline">\(R^2 = \mathrm{DI}\)</span>, so <span class="math inline">\(R^2\)</span> is the proportion of uncertainty explained by the predictions.</p></li>
+<li><p>If predictions are not calibrated, then <span class="math inline">\(R^2\)</span> cannot be interpreted as the proportion of uncertainty explained by the predictions.</p></li>
+<li><p><span class="math inline">\(R^2\)</span> is always the proportional reduction in score relative to the best constant prediction, <span class="math inline">\(\mathbb{E}(Y)\)</span>.</p></li>
+</ul>
+</div>
+</div>
+<p>We note that in practice these metrics can all be estimated using straightforward empirical estimators similar to those described for quadratic loss (see section on estimation <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics/">discussed in Part 1 of this post</a>).</p>
+<section id="comments-on-log-loss" class="level1">
+<h1>Comments on log loss</h1>
+<p>Because of the connections to maximum likelihood estimation and information theory, some researchers prefer log loss to quadratic loss for binary outcomes. We note two issues with log loss scoring. The first is that log loss is not defined if <span class="math inline">\(\hat{y} = 0\)</span> and <span class="math inline">\(y = 1\)</span>, even in a large data set. So log loss should be restricted to the evaluation of models that will never make predictions that are exactly 0. The second issue is that metrics based on quadratic loss are arguably more interpretable or at least familiar to many researchers and data scientists. Both quadratic and log loss are frequently used for binary outcomes and we recommend either (better yet, both if possible) for performance evaluation.</p>
+<p>Since Brier scores are equivalent to MSE, the definition of a calibration line for quadratic loss scoring rules is the same as defined in the preceding sections. However, note that since the outcomes are binary, the calibration line is not guaranteed to have predictions between 0 and 1. Therefore we recommend being cautious about the use of calibration lines when using quadratic loss.</p>
+<p>Recall that the calibration line was <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics/">previously defined</a> as the linear transformation of the predictions that maximizes the quadratic loss-based <span class="math inline">\(R^2\)</span>. If log loss is used instead, the calibration line is then defined as the population logistic regression of outcome versus <span class="math inline">\(\hat{Y}\)</span> and in this case <span class="math inline">\(logit(\mathbb{E}(Y|\hat{Y}))\)</span> would be some linear function of <span class="math inline">\(\hat{Y}\)</span>. However, this is problematic, since if the model is calibrated then <span class="math inline">\(logit(\mathbb{E}(Y|\hat{Y}))=logit(\hat{Y})\)</span>, which is not a linear function of <span class="math inline">\(\hat{Y}\)</span>, let alone one with intercept 0 and slope 1. This issue is solved by performing a population logistic regression of outcome on <span class="math inline">\(logit(\hat{Y})\)</span> rather than on <span class="math inline">\(\hat{Y}\)</span>, which is usually how an appropriate calibration line is defined for log loss.</p>
+<p><a href="#fig-logit" class="quarto-xref">Figure&nbsp;2</a> shows that when <span class="math inline">\(\hat{Y}\)</span> is logit transformed prior to fitting the logistic regression (i.e.&nbsp;both conditional outcome probabilities <span class="math inline">\(C(\hat{Y})\)</span> and <span class="math inline">\(\hat{Y}\)</span> are logit transformed), calibration lines will actually be lines. However, on the original probability scale calibration lines are actually curves (except when the predictions are perfectly calibrated).</p>
+<div id="fig-logit" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-logit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-logit" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-logit-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-logit-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-logit-1.png" class="img-fluid figure-img" data-ref-parent="fig-logit" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-logit-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Logit-logit calibration line
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-logit" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-logit-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-logit-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-logit-2.png" class="img-fluid figure-img" data-ref-parent="fig-logit" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-logit-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Corresponding calibration line on original scales
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-logit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Calibration lines for log loss
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="comments-on-misclassification-error" class="level1">
+<h1>Comments on misclassification error</h1>
+<p>Finally, we note that misclassification error is also a commonly used metric for probabilistic predictions of binary outcomes. It has been noted that this metric is a score based on a proper scoring rule <span class="citation" data-cites="Dimitriadis">(<a href="#ref-Dimitriadis" role="doc-biblioref">Dimitriadis et al., 2021</a>)</span>: <span class="math inline">\(I(\hat{y}&lt;1/2,y=1)+I(\hat{y}&gt;1/2,y=0)+ \frac{1}{2} I(\hat{y}=1/2)\)</span>.</p>
+<p>This scoring rule dichotomizes the probabilistic predictions via a threshold at 1/2 and the proportion of discrepancies with the outcome is the misclassification error metric. However it is not strictly proper since it only matters if the predicted probability is above or below the decision threshold. Misclassification error will not change if the probabilistic predictions are adjusted arbitrarily, as long as those adjustments do not cross the decision threshold. Consequently misclassification error is not uniquely optimized at the true probabilities. Since misclassification error is not a strictly proper scoring rule, a decomposition into calibration and discrimination cannot meaningfully be used for that scoring rule.</p>
+<p>More importantly, in most applications it is the predicted probabilities that are of interest so that individual users of the model can make their own decisions on what actions to take. In such settings it is premature for the builder of the prediction model to use an arbitrary cut point, such as 1/2, as a decision threshold. An exception to this would be for prediction models that have nearly perfect accuracy for the binary outcomes and where costs of the few misclassifications are roughly the same for predicted events vs predicted non events. An example of this would be modern optical character recognition systems. However, most applications do not satisfy such prerequisites and we do not recommend the use of misclassification error as a performance metric. Frank Harrell’s insightful <a href="https://www.fharrell.com/">blog</a> on statistical thinking has further discussion of this topic.</p>
+</section>
+<section id="pseudo-r2" class="level1">
+<h1>Pseudo <span class="math inline">\(R^2\)</span></h1>
+<p>In parallel with the development of metrics based on scoring rules, there has been considerable work to develop pseudo-<span class="math inline">\(R^2\)</span>s that are applicable to binary outcomes (see <span class="citation" data-cites="Mittlbock">MITTLBOCK et al. (<a href="#ref-Mittlbock" role="doc-biblioref">1996</a>)</span> for a nice summary). We review some of them below and place them in context of what we have learned about quadratic and log loss-based metrics. Pseudo-<span class="math inline">\(R^2\)</span> metrics are usually calculated in-sample. However, we will comment on the more relevant population performance when these are applied out of sample as we have done in the rest of the blog:</p>
+<ul>
+<li><p>Sum of Squares <span class="math inline">\(R^2\)</span> (<span class="math inline">\(R^2_{SS}\)</span>): This is equivalent to the <span class="math inline">\(R^2\)</span> based on quadratic loss.</p></li>
+<li><p>Entropy <span class="math inline">\(R^2\)</span> (<span class="math inline">\(R^2_E\)</span>): This is the same as the <span class="math inline">\(R^2\)</span> based on the log loss scoring rule. It was proposed by Theil (1970) and is equivalent to McFadden’s <span class="math inline">\(R^2\)</span> <span class="citation" data-cites="Theil McFadden">(<a href="#ref-McFadden" role="doc-biblioref">McFadden, 1974</a>; <a href="#ref-Theil" role="doc-biblioref">Theil, 1970</a>)</span>.</p></li>
+<li><p>Gini’s Concentration Measure <span class="math inline">\(R^2\)</span> (<span class="math inline">\(R^2_G\)</span>): This is the expected nominal variance of the conditional Bernoulli outcomes. If predictions are calibrated, this is the same as <span class="math inline">\(R^2 = DI\)</span> for quadratic loss. If predictions are not calibrated there is no guarantee <span class="math inline">\(R^2_G\)</span> represents anything meaningful.</p></li>
+<li><p>Tjur’s Coefficient of Discrimination <span class="math inline">\(R^2\)</span> (<span class="math inline">\(R^2_T\)</span>) <span class="citation" data-cites="Tjur">(<a href="#ref-Tjur" role="doc-biblioref">Tjur, 2009</a>)</span>: This is the mean of the predictions for all events minus the mean of the predictions for all non events: <span class="math inline">\(\mathbb{E}(\hat{Y} | Y = 1) - \mathbb{E}(\hat{Y} | Y = 0)\)</span>. We note it is also the same as discrimination slope <span class="citation" data-cites="Pencina2008">(<a href="#ref-Pencina2008" role="doc-biblioref">Pencina et al., 2008</a>)</span>. Surprisingly, if the predictions are calibrated then this is the same as <span class="math inline">\(R^2 = DI\)</span> for the quadratic loss scoring rule <span class="citation" data-cites="Huang2007">(<a href="#ref-Huang2007" role="doc-biblioref">Pepe et al., 2008</a>)</span>. If predictions are not calibrated, there is no guarantee this represents anything meaningful. For example, all predictions can be multiplied by a small positive scalar, <span class="math inline">\(k\)</span>. These transformed scores should have the same discrimination as the original predictions, but <span class="math inline">\(R^2_T\)</span> will be multiplied by that same factor, <span class="math inline">\(k\)</span>.</p></li>
+<li><p>Cox and Snell <span class="math inline">\(R^2\)</span> (<span class="math inline">\(R^2_{CS}\)</span>): This is <span class="math inline">\(1 - \big(\frac{\mathbb{L}_{null}}{\mathbb{L}_{model}}\big)^{(2/n)}\)</span>, also known as the Maximum Likelihood <span class="math inline">\(R^2\)</span>. If the normal theory based likelihood is used for regression, then this is equivalent to the usual in-sample OLS <span class="math inline">\(R^2\)</span>. It is therefore viewed as a generalization of <span class="math inline">\(R^2\)</span> applicable to a variety of distributions. However, for binary outcomes, the upper limit of this pseudo-<span class="math inline">\(R^2\)</span> is strictly less than 1, even with perfect predictions. It also doesn’t correspond to the skill score of a strictly proper scoring rule so the fundamental decomposition and interpretations do not apply to it.</p></li>
+<li><p>Nagelkerke <span class="math inline">\(R^2\)</span> (<span class="math inline">\(R^2_N\)</span>): This rescales the Cox and Snell pseudo <span class="math inline">\(R^2_{CS}\)</span> by its maximum value, <span class="math inline">\(U = 1 - \mathbb{L}_{null}^{(2/n)}\)</span>. So <span class="math inline">\(R^2_N = R^2_{CS} / U\)</span> now has a maximum value of 1 which is achieved when all predictions are perfect. However, it still has the disadvantage of the Cox and Snell pseudo-<span class="math inline">\(R^2\)</span> that it does not correspond to the skill score of a strictly proper scoring rule.</p></li>
+</ul>
+<p>We prefer the metrics suggested in this blog over both <span class="math inline">\(R^2_{CS}\)</span> and <span class="math inline">\(R^2_N\)</span> due to the greater interpretation provided by the Fundamental Decomposition and interpretation as Proportion of Explained Uncertainty, potentially after suitable recalibration. The other pseudo-<span class="math inline">\(R^2\)</span>s, when viewed as out of sample population parameters represent either <span class="math inline">\(R^2\)</span> or <span class="math inline">\(DI\)</span>, potentially after suitable recalibration, for either quadratic or log Loss, so they do not add anything to the metrics we have proposed. We note also that this is not an exhaustive list of pseudo-<span class="math inline">\(R^2\)</span>s, and there are additional variations, for example, to account for over-fitting <span class="citation" data-cites="Pseudo">(<a href="#ref-Pseudo" role="doc-biblioref">Hemmert et al., 2018</a>)</span>. Rather than addressing over-fitting by incorporating explicit adjustments into the metrics, we handle this by out of sample estimation and, in case the same data is being used to develop the predictive models, resampling based on out of sample estimates.</p>
+</section>
+<section id="summarykey-points" class="level1">
+<h1>Summary/Key Points</h1>
+<ul>
+<li><p>The general quality of predictions is assessed by accuracy, calibration, and discrimination. These three evaluation domains are often assessed completely independently of each other.</p></li>
+<li><p>We propose an approach that unifies these concepts via a scaled decomposition of accuracy into miscalibration and discrimination, <span class="math inline">\(R^2 = \mathrm{DI} - \mathrm{MI}\)</span>. This decomposition is unitless and clarifies that <span class="math inline">\(\mathrm{DI}\)</span> is the accuracy when there is no miscalibration, equivalently when the predictions are re-calibrated using the calibration curve.</p></li>
+<li><p>Interestingly, <span class="math inline">\(r^2\)</span> can be interpreted as the <span class="math inline">\(R^2\)</span> for the best linear recalibration. That metric is also inherently of interest for some applications such as covariate adjustment.</p></li>
+<li><p>The three key metrics are <span class="math inline">\(R^2\)</span>, <span class="math inline">\(r^2\)</span>, and <span class="math inline">\(\mathrm{DI}\)</span> and they satisfy a key inequality, <span class="math inline">\(R^2 \leq r^2 \leq DI\)</span>. The remaining metrics of <span class="math inline">\(\mathrm{MI}\)</span> and <span class="math inline">\(\mathrm{NI}\)</span> are derived from these.</p></li>
+<li><p>Discrimination can never be improved via recalibration, but miscalibration and accuracy can. These metrics are very informative for assessing how much accuracy can be improved via linear recalibration and recalibration via the calibration curve.</p></li>
+<li><p>For binary outcomes, both Brier Scores and Log Loss can be used to obtain meaningful performance metrics. For both, the decomposition and interpretations (with suitable modifications) all hold. In general, we recommend use of either score.</p></li>
+</ul>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-Brier1950" class="csl-entry" role="listitem">
+Brier, G. W. (1950). VERIFICATION OF FORECASTS EXPRESSED IN TERMS OF PROBABILITY. <em>U. S. Weather Bureau, Monthly Weather Review</em>.
+</div>
+<div id="ref-Brocker" class="csl-entry" role="listitem">
+Brocker, J. (2009). Stable reliability diagrams for probabilistic classifiers. <em>The Quarterly Journal of the Royal Meteorological Society</em>.
+</div>
+<div id="ref-Dimitriadis" class="csl-entry" role="listitem">
+Dimitriadis, T., Gneitingb, T., &amp; Jordan, A. I. (2021). Stable reliability diagrams for probabilistic classifiers. <em>PNAS</em>.
+</div>
+<div id="ref-Fissler" class="csl-entry" role="listitem">
+Fissler, T., Lorentzen, C., &amp; Mayer, M. (2022). Model comparison and calibration assessment. <em>arXiv</em>.
+</div>
+<div id="ref-Pseudo" class="csl-entry" role="listitem">
+Hemmert, G. A. J., Schons, L. M., Wieseke, J., &amp; Schimmelpfennig, H. (2018). Log-likelihood-based pseudo-R2 in logistic regression: Deriving sample-sensitive benchmarks. <em>Sociological Methods &amp; Research</em>.
+</div>
+<div id="ref-McFadden" class="csl-entry" role="listitem">
+McFadden, D. (1974). The measurement of urban travel demand. <em>Journal of Public Economics</em>.
+</div>
+<div id="ref-Mittlbock" class="csl-entry" role="listitem">
+MITTLBOCK, M., &amp; SCHEMPER, M. (1996). EXPLAINED VARIATION FOR LOGISTIC REGRESSION. <em>Statistics in Medicine</em>.
+</div>
+<div id="ref-Pencina2008" class="csl-entry" role="listitem">
+Pencina, M. J., Sr, R. B. D., Jr, R. B. D., &amp; Vasan, R. S. (2008). Evaluating the added predictive ability of a new marker: From area under the ROC curve to reclassification and beyond. <em>Statist. Med.</em>
+</div>
+<div id="ref-Huang2007" class="csl-entry" role="listitem">
+Pepe, M. S., Feng, Z., &amp; Gu, J. W. (2008). Comments on <span>“evaluating the added predictive ability of a new marker: From area under the ROC curve to reclassification and beyond”</span> by m. J. Pencina et al., statistics in medicine (DOI: 10.1002/sim.2929). <em>STATISTICS IN MEDICINE</em>.
+</div>
+<div id="ref-Theil" class="csl-entry" role="listitem">
+Theil, H. (1970). On the estimation of relationships involving qualitative variables. <em>American Journal of Sociology</em>.
+</div>
+<div id="ref-Tjur" class="csl-entry" role="listitem">
+Tjur, T. (2009). Coefficients of determination in logistic regression models—a new proposal: The coefficient of discrimination. <em>The American Statistician</em>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{friesenhahn, christina rabe and courtney schiffman2023,
+  author = {Friesenhahn, Christina Rabe and Courtney Schiffman, Michel},
+  title = {Everything You Wanted to Know about {R2} but Were Afraid to
+    Ask. {Part} 2, {Binary} Outcomes and Generalizing the Fundamental
+    Decomposition.},
+  date = {},
+  url = {https://www.go.roche.com/stats4datascience},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-friesenhahn, christina rabe and courtney schiffman2023" class="csl-entry quarto-appendix-citeas" role="listitem">
+Friesenhahn, Christina Rabe and Courtney Schiffman, M. (n.d.).
+<em>Everything you wanted to know about R2 but were afraid to ask. Part
+2, Binary outcomes and generalizing the fundamental decomposition.</em>
+Retrieved from <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

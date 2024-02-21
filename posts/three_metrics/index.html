@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Michel Friesenhahn">
+<meta name="author" content="Christina Rabe">
+<meta name="author" content="Courtney Schiffman">
+<meta name="dcterms.date" content="2023-10-26">
+
+<title>stats4datascience - Everything you wanted to know about R2 but were afraid to ask</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../assets/favicon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../assets/styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/favicon.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">stats<span class="fancy-four">4</span>datascience</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Everything you wanted to know about R<sup>2</sup> but were afraid to ask</h1>
+            <p class="subtitle lead">Part 1: Using a fundamental decomposition to gain insights into predictive model performance</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">machine learning</div>
+                <div class="quarto-category">model perormance</div>
+              </div>
+                  </div>
+  </div>
+    
+  <div class="quarto-title-meta-author">
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-heading">Affiliation</div>
+    
+      <div class="quarto-title-meta-contents">
+      <p class="author">Michel Friesenhahn <a href="mailto:friesenhahn.michel@gene.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              <a href="https://www.gene.com/">
+              Genentech
+              </a>
+            </p>
+        </div>
+      <div class="quarto-title-meta-contents">
+      <p class="author">Christina Rabe <a href="mailto:rabe.christina@gene.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              <a href="https://www.gene.com/">
+              Genentech
+              </a>
+            </p>
+        </div>
+      <div class="quarto-title-meta-contents">
+      <p class="author">Courtney Schiffman <a href="mailto:schiffman.courtney@gene.com" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+    </div>
+    <div class="quarto-title-meta-contents">
+          <p class="affiliation">
+              <a href="https://www.gene.com/">
+              Genentech
+              </a>
+            </p>
+        </div>
+    </div>
+
+  <div class="quarto-title-meta">
+
+        
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 26, 2023</p>
+      </div>
+    </div>
+    
+      <div>
+      <div class="quarto-title-meta-heading">Modified</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date-modified">February 21, 2024</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#accuracy" id="toc-accuracy" class="nav-link active" data-scroll-target="#accuracy">Accuracy</a></li>
+  <li><a href="#calibration" id="toc-calibration" class="nav-link" data-scroll-target="#calibration">Calibration</a></li>
+  <li><a href="#miscalibration-index-mi" id="toc-miscalibration-index-mi" class="nav-link" data-scroll-target="#miscalibration-index-mi">Miscalibration Index (MI)</a></li>
+  <li><a href="#discrimination" id="toc-discrimination" class="nav-link" data-scroll-target="#discrimination">Discrimination</a></li>
+  <li><a href="#discrimination-index-di" id="toc-discrimination-index-di" class="nav-link" data-scroll-target="#discrimination-index-di">Discrimination Index (DI)</a></li>
+  <li><a href="#a-fundamental-decomposition-of-r2" id="toc-a-fundamental-decomposition-of-r2" class="nav-link" data-scroll-target="#a-fundamental-decomposition-of-r2">A Fundamental Decomposition of <span class="math inline">\(R^2\)</span></a>
+  <ul class="collapse">
+  <li><a href="#the-fundamental-decomposition-of-r2" id="toc-the-fundamental-decomposition-of-r2" class="nav-link" data-scroll-target="#the-fundamental-decomposition-of-r2">The Fundamental Decomposition of <span class="math inline">\(R^2\)</span></a></li>
+  </ul></li>
+  <li><a href="#linear-recalibration" id="toc-linear-recalibration" class="nav-link" data-scroll-target="#linear-recalibration">Linear Recalibration</a></li>
+  <li><a href="#lhatyalpha_opt-beta_opthaty-is-referred-to-as-the-calibration-line-where" id="toc-lhatyalpha_opt-beta_opthaty-is-referred-to-as-the-calibration-line-where" class="nav-link" data-scroll-target="#lhatyalpha_opt-beta_opthaty-is-referred-to-as-the-calibration-line-where"><span class="math inline">\(L(\hat{Y})=\alpha_{opt} + \beta_{opt}\hat{Y}\)</span> is referred to as the <em>calibration line</em> where</a></li>
+  <li><a href="#what-about-r2" id="toc-what-about-r2" class="nav-link" data-scroll-target="#what-about-r2">What about <span class="math inline">\(r^2\)</span> ?</a></li>
+  <li><a href="#a-key-inequality" id="toc-a-key-inequality" class="nav-link" data-scroll-target="#a-key-inequality">A Key Inequality</a></li>
+  <li><a href="#key-inequality" id="toc-key-inequality" class="nav-link" data-scroll-target="#key-inequality"><em>Key Inequality</em></a></li>
+  <li><a href="#the-interpretation-youve-been-looking-for" id="toc-the-interpretation-youve-been-looking-for" class="nav-link" data-scroll-target="#the-interpretation-youve-been-looking-for">The Interpretation You’ve Been Looking For</a></li>
+  <li><a href="#estimating-performance-metrics" id="toc-estimating-performance-metrics" class="nav-link" data-scroll-target="#estimating-performance-metrics">Estimating Performance Metrics</a>
+  <ul class="collapse">
+  <li><a href="#estimating-mathrmdi" id="toc-estimating-mathrmdi" class="nav-link" data-scroll-target="#estimating-mathrmdi">Estimating <span class="math inline">\(\mathrm{DI}\)</span></a></li>
+  <li><a href="#estimating-mathrmmi" id="toc-estimating-mathrmmi" class="nav-link" data-scroll-target="#estimating-mathrmmi">Estimating <span class="math inline">\(\mathrm{MI}\)</span></a></li>
+  <li><a href="#estimating-mathrmr2" id="toc-estimating-mathrmr2" class="nav-link" data-scroll-target="#estimating-mathrmr2">Estimating <span class="math inline">\(\mathrm{R^2}\)</span></a></li>
+  <li><a href="#estimating-mathrmr2-1" id="toc-estimating-mathrmr2-1" class="nav-link" data-scroll-target="#estimating-mathrmr2-1">Estimating <span class="math inline">\(\mathrm{r^2}\)</span></a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">Example</a></li>
+  </ul></li>
+  <li><a href="#summarykey-points" id="toc-summarykey-points" class="nav-link" data-scroll-target="#summarykey-points">Summary/Key Points</a></li>
+  <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix">Appendix</a>
+  <ul class="collapse">
+  <li><a href="#appendix-a" id="toc-appendix-a" class="nav-link" data-scroll-target="#appendix-a">Appendix A</a></li>
+  <li><a href="#appendix-b" id="toc-appendix-b" class="nav-link" data-scroll-target="#appendix-b">Appendix B</a></li>
+  </ul></li>
+  <li><a href="#the-calibration-curve-is-the-transformation-that-maximizes-r2" id="toc-the-calibration-curve-is-the-transformation-that-maximizes-r2" class="nav-link" data-scroll-target="#the-calibration-curve-is-the-transformation-that-maximizes-r2">The calibration curve is the transformation that maximizes <span class="math inline">\(R^2\)</span></a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<center>
+<img src="images/Confusion.PNG" id="fig-confusion" class="img-fluid" style="width:90.0%">
+</center>
+<p><span class="math display">\[\\[.02in]\]</span></p>
+<p>There are two steps to state-of-the-art clinical prediction model performance evaluation. The first step, often referred to as overall model performance evaluation, involves interrogating the general quality of predictions in terms of how close they are to observed outcomes. Overall model performance is assessed via three general concepts that are widely applicable: accuracy, discrimination and calibration <span class="citation" data-cites="Steyerberg2010 Steyerberg2014">(<a href="#ref-Steyerberg2010" role="doc-biblioref">Steyerberg et al., 2010</a>, <a href="#ref-Steyerberg2014" role="doc-biblioref">2014</a>)</span>.</p>
+<p>There is some confusion around the relationship between accuracy, discrimination and calibration and what the best approach is to evaluate these concepts. This post aims to provide some clarity via a remarkable decomposition of <span class="math inline">\(R^2\)</span> that beautifully unifies these three concepts. While similar decompositions have existed for decades in meteorological forecasting <span class="citation" data-cites="Murphy1973">(<a href="#ref-Murphy1973" role="doc-biblioref">Murphy, 1973</a>)</span>, we wish to call greater attention to this underutilized evaluation tool and provide additional insights based on our own scaled version of the decomposition. Part 1 of this post provides details around which existing and newly proposed performance metrics to use for an overall assessment of prediction model quality. We will reveal how the suggested metrics are affected by transformations of the predicted values, explain the difference between <span class="math inline">\(R^2\)</span> and <span class="math inline">\(r^2\)</span>, demonstrate that <span class="math inline">\(R^2\)</span> can indeed be negative, and give practical guidance on how to compare the metrics to gain information about model performance. <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics_binary/">Part 2 of the post</a> explains how the metrics and decompositions discussed here are applicable to binary outcomes as well and can also be generalized beyond the familiar squared error loss.</p>
+<p>While accuracy, calibration, and discrimination provide important insights into the overall quality of the predictions, they are not direct metrics of the model’s fitness for use in a particular application. Therefore, for a complete performance evaluation, the second step is to evaluate utility using tailored metrics and visualizations. For example, if a model’s predictions are intended to be used as a covariate for a trial’s adjusted primary endpoint analysis, the effective sample size increase metric evaluates the expected precision gains from the adjustment <span class="citation" data-cites="schiffman">(<a href="#ref-schiffman" role="doc-biblioref">Schiffman et al., 2023</a>)</span>. Another example is net benefit decision curves, an elegant decision-analytic metric for assessing the utility in clinical practice of prognostic and diagnostic prediction models <span class="citation" data-cites="Vickers Calster2018">(<a href="#ref-Calster2018" role="doc-biblioref">Calster et al., 2018</a>; <a href="#ref-Vickers" role="doc-biblioref">Vickers et al., 2006</a>)</span>. The focus of this post, however, will be only on the first step of general model performance evaluation, and further discussion around assessing a model’s clinical utility is beyond its scope.</p>
+<p>This blog mostly focuses on defining and characterizing population level performance metrics. However, how to <a href="#estimating-performance-metrics">estimate metrics of these performance characteristics</a> is covered in a later section.</p>
+<section id="accuracy" class="level1">
+<h1>Accuracy</h1>
+<p>The central desirable property of a prediction model is accuracy. An accurate model is one for which predicted outcomes <span class="math inline">\(\hat{Y}\)</span> are close to observed outcomes <span class="math inline">\(Y\)</span>, as measured with a scoring rule. A scoring rule is a function of <span class="math inline">\(\hat{y}\)</span> and <span class="math inline">\(y\)</span> that assigns a real value score <span class="math inline">\(s(\hat{y},y)\)</span>. Without loss of generality, we follow the convention of using scoring rules with negative orientation, meaning larger scores represent greater discrepancies between <span class="math inline">\(\hat{y}\)</span> and <span class="math inline">\(y\)</span>. One such example is the quadratic loss (or squared error) scoring rule, <span class="math inline">\(s(\hat{y},y)=(\hat{y}-y)^2\)</span>. Quadratic loss is one of the most common scoring rules because of its simplicity, interpretability and because it is a strictly proper scoring rule (see <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics_binary/">Part 2 of this post</a> for more details on proper scoring rules) <span class="citation" data-cites="Fissler">(<a href="#ref-Fissler" role="doc-biblioref">Fissler et al., 2022</a>)</span>.</p>
+<p>The <em>mean squared error</em> (<span class="math inline">\(\mathrm{MSE}\)</span>) of a prediction model is its expected quadratic loss,</p>
+<p><span id="eq-mse-sel"><span class="math display">\[\mathrm{MSE} = \mathbb{E}\big[(Y-\hat{Y})^2\big] \tag{1}\]</span></span></p>
+<p>We assume that the evaluation of prediction models is done on an independent test data set not used in the development of the model. Therefore, the expectation in <a href="#eq-mse-sel" class="quarto-xref">Equation&nbsp;1</a> would be taken over an independent test set and the error would be referred to as generalization error, as opposed to in-sample error <span class="citation" data-cites="Fissler">(<a href="#ref-Fissler" role="doc-biblioref">Fissler et al., 2022</a>)</span>. We make a quick note here that it is often convenient to work with <span class="math inline">\(R^2=1-\frac{MSE}{Var(Y)}\)</span>, a scaled version of <span class="math inline">\(\mathrm{MSE}\)</span>. <span class="math inline">\(R^2\)</span> will be revisited later on in this post.</p>
+<p><a href="#fig-mse" class="quarto-xref">Figure&nbsp;1</a> is a visual aid for understanding <span class="math inline">\(\mathrm{MSE}\)</span> as a metric of accuracy and what performance qualities affect it. Predicted outcomes <span class="math inline">\(\hat{Y}\)</span> are shown on the x-axis vs.&nbsp;observed outcomes <span class="math inline">\(Y\)</span> on the y-axis for three different models (panels (a)-(c)). Red vertical lines show the distance between <span class="math inline">\(Y\)</span> and <span class="math inline">\(\hat{Y}\)</span>. <span class="math inline">\(\mathrm{MSE}\)</span> is the average of the squared lengths of these red lines.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-mse" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-mse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-mse-1.png" class="img-fluid figure-img" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Visualizing the Effects of Calibration and Discrimination on Mean Squared Error
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>For Model 1 in panel (a) of <a href="#fig-mse" class="quarto-xref">Figure&nbsp;1</a>, data points are relatively close to the trend line which in this case is the identity line (<span class="math inline">\(Y=\hat{Y}\)</span>), so there is little difference between predicted and observed outcomes. The closer data points are to the identity line, the smaller the average length of the red lines and the smaller the <span class="math inline">\(\mathrm{MSE}\)</span>.</p>
+<p>What would increase the distance between <span class="math inline">\(Y\)</span> and <span class="math inline">\(\hat{Y}\)</span>? For Model 2 in <a href="#fig-mse" class="quarto-xref">Figure&nbsp;1</a> (b), data points still have little variability around the trend line, but now the trend line is no longer equal to the identity line. The predictions from Model 2 are systematically biased. This increases the <span class="math inline">\(\mathrm{MSE}\)</span>, illustrated by the increase in the average length of the red lines for Model 2 compared to Model 1.</p>
+<p>Like Model 1, the trend line for Model 3 in <a href="#fig-mse" class="quarto-xref">Figure&nbsp;1</a> (c) is the identity line and predictions are not systematically biased. However, there is more variability around the trend line. In other words, the predictions from Model 3 explain less of the variability in the outcome. The average length of the red lines increases as less of the outcome variability is explained by the predictions.</p>
+<p><a href="#fig-mse" class="quarto-xref">Figure&nbsp;1</a> illustrates how <span class="math inline">\(\mathrm{MSE}\)</span> is yet another quantity that is impacted by the two concepts of bias and variance. In the context of predictive modeling, these two concepts are referred to as calibration and discrimination, respectively, and will be formally defined in the upcoming sections. Later we will derive a mathematical decomposition of accuracy into these two components to obtain a simple quantitative relationship between accuracy, calibration, and discrimination.</p>
+</section>
+<section id="calibration" class="level1">
+<h1>Calibration</h1>
+<p><em>Calibration</em> is the assessment of systematic bias in a model’s predictions. The <em>average</em> of the observed outcomes for data points whose predictions are all <span class="math inline">\(\hat{y}\)</span> should be close to <span class="math inline">\(\hat{y}\)</span>. If that is not the case, there is systematic bias in the model’s predictions and it is miscalibrated. Visually, when plotting predicted outcomes on the x-axis vs.&nbsp;observed outcomes on the y-axis, the model is calibrated if points are centered around the identity line <span class="math inline">\(Y=\hat{Y}\)</span>, as they are in <a href="#fig-cal" class="quarto-xref">Figure&nbsp;2</a> panel (b).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-cal" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cal-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Example of two models, one calibrated and one miscalibrated, with the same discrimination
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>More formally, define the <em>calibration curve</em> to be the function <span class="math inline">\(\mathrm{C}(\hat{y}) = \mathbb{E}[Y \mid \hat{Y} = \hat{y}]\)</span>. A model is calibrated if and only if <span class="math inline">\(C(\hat{Y}) = \mathbb{E}[Y \mid \hat{Y} ] = \hat{Y}\)</span>. As illustrated in <a href="#fig-MI" class="quarto-xref">Figure&nbsp;3</a>, miscalibration is numerically defined to be the expected squared difference between the predictions and the calibration curve, <span class="math inline">\(E\big[(C(\hat{Y}) - \hat{Y})^2\big]\)</span>. Using the calibration curve, we define the miscalibration index (<span class="math inline">\(\mathrm{MI}\)</span>) as miscalibration normalized by the variance of <span class="math inline">\(Y\)</span>. Clearly <span class="math inline">\(\mathrm{MI}\geq0\)</span> and <span class="math inline">\(\mathrm{MI}=0\)</span> if and only if the model is perfectly calibrated. A model can be <strong>recalibrated</strong> by transforming its predictions via the calibration curve <span class="math inline">\(C(\hat{Y})\)</span> (proof in the <a href="#appendix-b">Appendix</a>), in other words by applying the function <span class="math inline">\(C(\hat{Y}) = \mathbb{E}[Y \mid \hat{Y}]\)</span> to the model’s predictions.</p>
+</section>
+<section id="miscalibration-index-mi" class="level1 callout-definition">
+<h1>Miscalibration Index (MI)</h1>
+<p>The Miscalibration Index (MI) is the <span class="math inline">\(MSE\)</span> between <span class="math inline">\(C(\hat{Y})\)</span> and <span class="math inline">\(\hat{Y}\)</span> normalized by <span class="math inline">\(Var(Y)\)</span></p>
+<p><span id="eq-MI"><span class="math display">\[
+MI = \frac{E\big[(C(\hat{Y}) - \hat{Y})^2\big]}{Var(Y)}
+\tag{2}\]</span></span> <span class="math inline">\(MI\geq0\)</span> and <span class="math inline">\(\mathrm{MI}=0\)</span> iff the model is perfectly calibrated</p>
+</section>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-MI" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-MI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-MI-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-MI-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The miscalibration Index (MI) is the MSE between <span class="math inline">\(C(\hat{Y})\)</span> and <span class="math inline">\(\hat{Y}\)</span>, scaled by the variance of <span class="math inline">\(Y\)</span>
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>A growing number of researchers are calling for calibration evaluation to become a standard part of model performance evaluation <span class="citation" data-cites="Calster2019">(<a href="#ref-Calster2019" role="doc-biblioref">Calster et al., 2019</a>)</span>. This is because for many use cases calibration is an important component of prediction quality that impacts utility. For example, calibration is very important when the prediction model is intended to be used in medical practice to manage patients. Since decisions in such scenarios are based on absolute risks, systematic deviations from true risks can lead to suboptimal care. While the importance of calibration varies depending on the use case, it is simple enough to examine that it should be a routine part of model performance evaluation <span class="citation" data-cites="Calster2019">(<a href="#ref-Calster2019" role="doc-biblioref">Calster et al., 2019</a>)</span>.</p>
+<p>As demonstrated in <a href="#fig-mse" class="quarto-xref">Figure&nbsp;1</a> (c), while calibration is important, it does not assess the spread of the expected outcome values. For example, a constant prediction model <span class="math inline">\(\hat{Y}=\mathbb{E}(Y)\)</span> is calibrated (since <span class="math inline">\(\mathbb{E}[Y|\hat{Y}=\mathbb{E}(Y)]=\mathbb{E}(Y)\)</span>), but it has zero variance of the expected outcome values and thus no ability to discriminate between observations.</p>
+<section id="discrimination" class="level1">
+<h1>Discrimination</h1>
+<p>The two models shown in <a href="#fig-dis" class="quarto-xref">Figure&nbsp;4</a> are both calibrated, but the model in panel (b) has better <em>discrimination</em> than the model in panel (a). Compared to the model in panel (a), the model in panel (b) explains the true outcome <span class="math inline">\(Y\)</span> with less spread around the calibration curve <span class="math inline">\(\mathrm{C}(\hat{Y})\)</span>, which in this instance is the identity line. For a given outcome distribution <span class="math inline">\(Y\)</span>, less spread around <span class="math inline">\(\mathrm{C}(\hat{Y})\)</span> translates into a larger variation in <span class="math inline">\(\mathrm{C}(\hat{Y})\)</span>. Thus there are two equivalent ways to view discrimination, either as the amount of explained variability in the outcome or as the variance of the calibration curve.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-dis" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-dis-1.png" class="img-fluid figure-img" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Visualizing the effect of discrimination on MSE
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>To formalize this concept, define discrimination as the variance of the calibration curve, <span class="math inline">\(Var(C(\hat{Y}))\)</span>. We then define the Discrimination Index <span class="math inline">\(\mathrm{(DI)}\)</span> as discrimination scaled by <span class="math inline">\(Var(Y)\)</span>.</p>
+</section>
+<section id="discrimination-index-di" class="level1 callout-definition">
+<h1>Discrimination Index (DI)</h1>
+<p>The Discrimination Index (DI) is the variance of the calibration curve <span class="math inline">\(C(\hat{Y})\)</span> scaled by <span class="math inline">\(Var(Y)\)</span></p>
+<p><span id="eq-DI"><span class="math display">\[
+DI = \frac{Var(C(\hat{Y}))}{Var(Y)}
+\tag{3}\]</span></span></p>
+<p><span class="math inline">\(0\leq DI\leq1\)</span></p>
+</section>
+<p>The more variability in the observed outcomes explained by the predictions, the larger the variance in <span class="math inline">\(C(\hat{Y})\)</span> and the larger the <span class="math inline">\(\mathrm{DI}\)</span>. For example, the model in <a href="#fig-dis" class="quarto-xref">Figure&nbsp;4</a> panel (b) has a larger <span class="math inline">\(\mathrm{DI}\)</span> than the model in panel (a). In general, <span class="math inline">\(\mathrm{DI}\)</span> is a non-negative number that can be at most <span class="math inline">\(1\)</span> (proof in <a href="#appendix-b">Appendix</a>). If a model’s predictions explain virtually all of the variability in the observed outcomes, then <span class="math inline">\(\mathrm{DI}\approx1\)</span>. Unlike <span class="math inline">\(\mathrm{MI}\)</span>, <span class="math inline">\(\mathrm{DI}\)</span> is unchanged by calibrating the model (proof in <a href="#appendix-b">Appendix</a>).</p>
+<section id="a-fundamental-decomposition-of-r2" class="level1">
+<h1>A Fundamental Decomposition of <span class="math inline">\(R^2\)</span></h1>
+<p>Now that calibration and discrimination are well-defined, we return to model accuracy. Recall that <span class="math inline">\(\mathrm{MSE}\)</span>, the expected quadratic loss over an independent test set, is an accuracy metric. We noted earlier that <span class="math inline">\(\mathrm{MSE}\)</span> depends on the scale of <span class="math inline">\(Y\)</span>. It is therefore sensible to normalize the <span class="math inline">\(\mathrm{MSE}\)</span> by the total variance, <span class="math inline">\(Var(Y)\)</span>. Finally, subtracting from 1 gives another well-known accuracy metric, <span class="math inline">\(R^2\)</span>:</p>
+<p><span id="eq-simple-r2"><span class="math display">\[
+\begin{align}
+R^2 = 1-\frac{\mathrm{MSE}}{Var(Y)}
+\end{align}
+\tag{4}\]</span></span></p>
+<p><a href="#eq-mse-decomp" class="quarto-xref">Equation&nbsp;5</a> shows that <span class="math inline">\(\mathrm{MSE}\)</span> can be decomposed into the total variation of the observed outcomes, the variance of the calibration curve, and the mean squared error between the calibration curve and predictions (see proof in the <a href="#appendix-b">Appendix</a>):</p>
+<p><span id="eq-mse-decomp"><span class="math display">\[
+\begin{align}
+  \mathrm{MSE} &amp;= Var(Y) - Var(\mathrm{C}(\hat{Y})) + \mathbb{E}\big[(\mathrm{C}(\hat{Y}) - \hat{Y})^2 \big] \\
+\end{align}
+\tag{5}\]</span></span></p>
+<p>Replacing the numerator in <a href="#eq-simple-r2" class="quarto-xref">Equation&nbsp;4</a> with the <span class="math inline">\(\mathrm{MSE}\)</span> decomposition from <a href="#eq-mse-decomp" class="quarto-xref">Equation&nbsp;5</a>, it can be easily shown how <span class="math inline">\(R^2\)</span> is affected by miscalibration and discrimination.</p>
+<section id="the-fundamental-decomposition-of-r2" class="level2 callout-definition">
+<h2 class="anchored" data-anchor-id="the-fundamental-decomposition-of-r2">The Fundamental Decomposition of <span class="math inline">\(R^2\)</span></h2>
+<p><span id="eq-R2-decomp"><span class="math display">\[
+\begin{align}
+  R^2&amp; = DI - MI
+\end{align}
+\tag{6}\]</span></span></p>
+</section>
+<p>This wonderfully simple decomposition of <span class="math inline">\(R^2\)</span> into the difference between <span class="math inline">\(DI\)</span> and <span class="math inline">\(MI\)</span> disentangles the concepts of accuracy, calibration and discrimination. The decomposition reveals that <span class="math inline">\(R^2\)</span> holds valuable information on model performance.</p>
+<p>Some very useful observations follow directly from this decomposition:</p>
+<ul>
+<li>Since <span class="math inline">\(MI \geq 0\)</span> and <span class="math inline">\(0 \leq DI\leq 1\)</span>, <span class="math inline">\(R^2 \leq 1\)</span>. In fact, <span class="math inline">\(R^2\)</span> can be negative due to miscalibration!</li>
+<li>Calibrating a model or increasing its discriminatory power increases accuracy.</li>
+<li>If <span class="math inline">\(R^2 &lt; DI\)</span>, accuracy can be improved by calibrating the model. <span class="math inline">\(R^2\)</span> will equal <span class="math inline">\(\mathrm{DI}\)</span> for the calibrated model.</li>
+</ul>
+<center>
+<div id="fig-quad" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-quad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/quadrants_numbers_v2.PNG" class="img-fluid figure-img" style="width:75.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-quad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Visualizing the effects of calibration and discrimination on overall accuracy
+</figcaption>
+</figure>
+</div>
+</center>
+<p><a href="#fig-quad" class="quarto-xref">Figure&nbsp;5</a> demonstrates four examples of the fundamental decomposition. The models in the bottom row of <a href="#fig-quad" class="quarto-xref">Figure&nbsp;5</a> have imperfect calibration (<span class="math inline">\(MI&gt;0\)</span>),and thus accuracy can be improved via calibration. The top row of <a href="#fig-quad" class="quarto-xref">Figure&nbsp;5</a> is the result of calibrating the bottom row models; <span class="math inline">\(\mathrm{DI}\)</span> remains the same but <span class="math inline">\(\mathrm{MI}=0\)</span> after calibration and thus <span class="math inline">\(R^2\)</span> increases. Although both models in the top row of <a href="#fig-quad" class="quarto-xref">Figure&nbsp;5</a> have perfect calibration, the model on the right has better discrimination and thus greater <span class="math inline">\(R^2\)</span>.</p>
+<p>Similar concepts and decompositions have been discussed since the 70’s and 80’s, in many cases developed with a focus on binary outcomes <span class="citation" data-cites="Murphy1973 DeGroot Dimitriadis">(<a href="#ref-DeGroot" role="doc-biblioref">DeGroot et al., 1983</a>; <a href="#ref-Dimitriadis" role="doc-biblioref">Dimitriadis et al., 2021</a>; <a href="#ref-Murphy1973" role="doc-biblioref">Murphy, 1973</a>)</span>. Part of the appeal of these decompositions, including our proposed Fundamental Decomposition, is that they apply to both continuous and binary outcomes, assuming that binary outcomes are coded with values in {0,1}. In historical and recent literature, the terms <em>reliability</em>, <em>resolution</em> and <em>uncertainty</em> are sometimes used instead of <em>calibration</em>, <em>discrimination</em> and <em>variance of the observed outcome</em>.</p>
+</section>
+<section id="linear-recalibration" class="level1">
+<h1>Linear Recalibration</h1>
+<p>We have already introduced recalibration via the calibration curve <span class="math inline">\(C(\hat{Y})\)</span>, but there is also linear recalibration. Linear transformations are easier to estimate than unconstrained calibration curves, and may be more appropriate for smaller sample sizes.</p>
+<p>As illustrated in <a href="#fig-LX-CX" class="quarto-xref">Figure&nbsp;6</a>, the linear transformation of predictions that maximizes <span class="math inline">\(R^2\)</span> is referred to as the <em>calibration line</em>:</p>
+</section>
+<section id="lhatyalpha_opt-beta_opthaty-is-referred-to-as-the-calibration-line-where" class="level1 callout-definition">
+<h1><span class="math inline">\(L(\hat{Y})=\alpha_{opt} + \beta_{opt}\hat{Y}\)</span> is referred to as the <em>calibration line</em> where</h1>
+<p><span id="eq-cal-line"><span class="math display">\[
+\begin{align}
+(\alpha_{opt} , \beta_{opt}) =argmin_{\alpha,\beta} \mathbb{E}\big[\big(Y-(\alpha + \beta\hat{Y})\big)^2\big] \\
+\beta_{opt}=\frac{Cov(Y,\hat{Y})}{Var(\hat{Y})} \\
+\alpha_{opt} = \mathbb{E}[Y] - \beta_{opt}\mathbb{E}[\hat{Y}] \space \\
+\end{align}
+\tag{7}\]</span></span></p>
+<p><span class="math inline">\(L(\hat{Y})\)</span> is the linear transformation that maximizes <span class="math inline">\(R^2\)</span>.</p>
+</section>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-LX-CX" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-LX-CX-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-LX-CX-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-LX-CX-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: The calibration line and calibration curve.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Not surprisingly, <span class="math inline">\(\alpha_{opt}\)</span> and <span class="math inline">\(\beta_{opt}\)</span> are the familiar population least squares linear regression coefficients for a linear model with an intercept and single predictor (proof in <a href="#appendix-b">Appendix</a>). <span class="math inline">\(\alpha_{opt}\)</span> and <span class="math inline">\(\beta_{opt}\)</span> are also referred to as the calibration intercept and slope, respectively.</p>
+<p>When predictions are transformed via the calibration line, <span class="math inline">\(R^2\)</span> is equal to the squared Pearson correlation between the predictions and the observed outcomes, <span class="math inline">\(R^2=r^2 = cor^2(Y,\hat{Y})\)</span> (see <a href="#appendix-b">Appendix</a> for proof). Note that, in general, <span class="math inline">\(R^2\)</span> and <span class="math inline">\(r^2\)</span> are not equal, easily seen by the fact that <span class="math inline">\(R^2\)</span> can be negative whereas <span class="math inline">\(0 \leq r^2 \leq1\)</span>. <span class="math inline">\(\mathrm{DI}\)</span> remains unchanged by linear recalibration, but <span class="math inline">\(\mathrm{MI}\)</span> becomes <span class="math inline">\(\mathrm{MI} = \mathrm{DI} - R^2 = \mathrm{DI} - r^2\)</span>. We refer to <span class="math inline">\(\mathrm{DI} - r^2\)</span> as the <strong>nonlinearity index</strong> <span class="math inline">\(\mathrm{NI}\)</span>, since any residual miscalibration after linear recalibration is a measure of nonlinearity in the calibration curve.</p>
+<section id="what-about-r2" class="level1">
+<h1>What about <span class="math inline">\(r^2\)</span> ?</h1>
+<p>In the previous section it was noted that after linear recalibration the <span class="math inline">\(R^2\)</span> accuracy metric equals <span class="math inline">\(r^2\)</span>, the squared Pearson correlation coefficient, and in general <span class="math inline">\(R^2\)</span> need not equal <span class="math inline">\(r^2\)</span>. Here we note that in some settings the <span class="math inline">\(r^2\)</span> metric is of interest in its own right. An important example is for covariate adjustment in clinical trials (<span class="citation" data-cites="schiffman">Schiffman et al. (<a href="#ref-schiffman" role="doc-biblioref">2023</a>)</span>). There, treatment effects are adjusted using predictions from a model developed based on data external to the clinical trial. <span class="math inline">\(r^2\)</span> is a useful metric for this application because it can be used to quantify the expected precision and power gains from adjustment when the outcome is continuous. Our <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/covariate_adjustment/">previous post</a> on covariate adjustment reveals how the effective sample size increase (<span class="math inline">\(ESSI\)</span>) from an adjusted analysis of a continuous outcome is a simple function of the squared correlations between the outcome and the covariate in the various treatment arms. For example, a squared correlation of <span class="math inline">\(r^2 = 0.3\)</span> between the outcome and the predicted outcome from a prognostic model would translate into an <span class="math inline">\(ESSI\)</span> of <span class="math inline">\(43\%\)</span> if the predictions were adjusted for in the primary analysis. Knowing <span class="math inline">\(r^2\)</span> allows study teams to be able to easily estimate the expected gains from covariate adjustment and to decide which covariates to adjust for.</p>
+<p>Note that covariate adjustment is an application of prediction models where calibration is not critical. Adjusting implicitly performs linear calibration, as needed, so only very marked nonlinearity in the calibration curve will impact the effectiveness of covariate adjustment. Since such nonlinearity is not common, calibration plays little to no role for this use case and discrimination is much more important.</p>
+</section>
+<section id="a-key-inequality" class="level1">
+<h1>A Key Inequality</h1>
+<p><a href="#tbl-3metrics" class="quarto-xref">Table&nbsp;1</a> summarizes the impact of transforming predictions via the calibration line and curve on <span class="math inline">\(R^2\)</span>, <span class="math inline">\(r^2\)</span>, <span class="math inline">\(DI\)</span> and <span class="math inline">\(MI\)</span>.</p>
+<div id="tbl-3metrics" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-3metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Relationship between <span class="math inline">\(R^2\)</span>, <span class="math inline">\(r^2\)</span> and <span class="math inline">\(DI\)</span>
+</figcaption>
+<div aria-describedby="tbl-3metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 16%">
+<col style="width: 12%">
+<col style="width: 12%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Predictor</th>
+<th style="text-align: center;"><span class="math inline">\(R^2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(r^2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(DI\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(MI\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\hat{Y}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(R^2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(r^2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(DI\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(DI-R^2\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(L(\hat{Y})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(r^2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(r^2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(DI\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(DI-r^2\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(C(\hat{Y})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(DI\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(DI\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(DI\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>An extremely useful inequality for evaluating model performance follows from the first column of <a href="#tbl-3metrics" class="quarto-xref">Table&nbsp;1</a>, and the fact that the calibration curve is the transformation that maximizes <span class="math inline">\(R^2\)</span> (proof in <a href="#appendix-b">Appendix</a>).</p>
+</section>
+<section id="key-inequality" class="level1 callout-definition">
+<h1><em>Key Inequality</em></h1>
+<p><span id="eq-inequality"><span class="math display">\[
+\begin{align}
+R^2 \leq r^2 \leq DI
+\end{align}
+\tag{8}\]</span></span></p>
+</section>
+<p>This key inequality has several useful implications:</p>
+<ul>
+<li><p>If <strong><span class="math inline">\(R^2=r^2=DI\)</span></strong> then <span class="math inline">\(MI=0\)</span> and the model is calibrated.</p></li>
+<li><p>If <strong><span class="math inline">\(R^2 &lt; r^2=DI\)</span></strong>, then the calibration curve is identical to the calibration line, but this line is not the identity. After linear recalibration using the calibration line, <span class="math inline">\(R^2\)</span> is increased to the <span class="math inline">\(r^2\)</span> and <span class="math inline">\(\mathrm{DI}\)</span> of the original predictions, <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>If <strong><span class="math inline">\(R^2 = r^2 &lt; DI\)</span></strong>, then the calibration line is the identity line, but the calibration curve is not linear. So linear recalibration will not change the predictions and recalibration using the calibration curve will increase both <span class="math inline">\(R^2\)</span> and <span class="math inline">\(r^2\)</span> to the <span class="math inline">\(\mathrm{DI}\)</span> of the original predictions, <span class="math inline">\(Y\)</span>.</p></li>
+<li><p>If <strong><span class="math inline">\(R^2 &lt; r^2 &lt; DI\)</span></strong>, then the calibration line is not the identity line and the calibration curve is not linear. Linear recalibration will increase <span class="math inline">\(R^2\)</span> to the <span class="math inline">\(r^2\)</span> of the original predictions; calibration using the calibration curve will increase <span class="math inline">\(R^2\)</span> and <span class="math inline">\(r^2\)</span> to the <span class="math inline">\(\mathrm{DI}\)</span> of the original predictions.</p></li>
+</ul>
+<p>By estimating and comparing these simple metrics, one can gain a comprehensive understanding of a model’s overall performance. Comparing <span class="math inline">\(\mathrm{R}^2\)</span>, <span class="math inline">\(\mathrm{r}^2\)</span> and <span class="math inline">\(DI\)</span> provides valuable information about whether the model is calibrated, whether the calibration curve is linear or non linear, whether the calibration line is the identity line, and what happens to the <span class="math inline">\(R^2\)</span> and <span class="math inline">\(r^2\)</span> metrics with linear recalibration or recalibration using the calibration curve.</p>
+<section id="the-interpretation-youve-been-looking-for" class="level1">
+<h1>The Interpretation You’ve Been Looking For</h1>
+<p>Based on these results we have the following simple interpretations for <span class="math inline">\(R^2\)</span> and <span class="math inline">\(\mathrm{DI}\)</span>. Note the important role calibration plays in interpreting <span class="math inline">\(R^2\)</span>:</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Interpretations of <span class="math inline">\(R^2\)</span> and <span class="math inline">\(DI\)</span> as Proportions of Explained Uncertainty
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p><span class="math inline">\(\mathrm{DI}\)</span> is the proportion of variability in the observed outcomes explained by recalibrated predictions.</p></li>
+<li><p>If predictions are calibrated, then <span class="math inline">\(R^2 = \mathrm{DI}=Var(C(\hat{Y})) / Var(Y)= Var(\hat{Y}) / Var(Y)\)</span>, so <span class="math inline">\(R^2\)</span> is the proportion of variability in the observed outcomes explained by the predictions.</p></li>
+<li><p>If predictions are not calibrated, then <span class="math inline">\(R^2\)</span> cannot be interpreted as the proportion of variability in the observed outcomes explained by the predictions.</p></li>
+<li><p><span class="math inline">\(R^2\)</span> is always the proportional reduction of <span class="math inline">\(\mathrm{MSE}\)</span> relative to the best constant prediction, <span class="math inline">\(\mathbb{E}(Y)\)</span>.</p></li>
+</ul>
+</div>
+</div>
+<p>The above interpretations of <span class="math inline">\(R^2\)</span> and <span class="math inline">\(\mathrm{DI}\)</span> may be confusing since they appear at odds with the traditional interpretation of <span class="math inline">\(R^2\)</span> as the proportion of variance explained by the predictions when outcomes are continuous. Furthermore, it is often stated that <span class="math inline">\(R^2 = r^2\)</span>, whereas we have stated that <span class="math inline">\(R^2 \leq r^2\)</span>, with equality if and only if the calibration line is the identity line.</p>
+<p>The reason for the discrepancy between the traditional interpretation of <span class="math inline">\(R^2\)</span> and what is stated here is that in the traditional setting <span class="math inline">\(R^2\)</span> is an in-sample estimator and the predictions come from ordinary least squares regression, so <span class="math inline">\(R^2 = \frac{Var(\hat{Y})}{Var(Y)}\)</span> and <span class="math inline">\(R^2 = r^2\)</span> necessarily. However, we do not think this traditional setting is particularly relevant and what is more, the interpretation of <span class="math inline">\(R^2\)</span> as the proportion of explained variability does not hold out of sample. Instead, we prefer to focus on out of sample performance and metrics that are applicable to any prediction model, not just models of continuous outcomes. For out of sample interpretation of performance metrics in any setting, use the simple interpretations listed in the callout block above which highlights the impact of calibration on the metrics’ interpretations.</p>
+</section>
+<section id="estimating-performance-metrics" class="level1">
+<h1>Estimating Performance Metrics</h1>
+<p>We assume that <span class="math inline">\(\mathrm{DI}\)</span>, <span class="math inline">\(\mathrm{MI}\)</span>, <span class="math inline">\(\mathrm{R^2}\)</span> and <span class="math inline">\(\mathrm{r}^2\)</span> are estimated using independent data that were not involved in the training or selection of the model being evaluated. If an independent data set is not available, performance metrics can be estimated using an appropriate resampling method to avoid overly optimistic estimates.</p>
+<section id="estimating-mathrmdi" class="level3">
+<h3 class="anchored" data-anchor-id="estimating-mathrmdi">Estimating <span class="math inline">\(\mathrm{DI}\)</span></h3>
+<p>Recall that <span class="math inline">\(\mathrm{DI}\)</span> is discrimination normalized by the variance of the observed outcomes:</p>
+<p><span class="math display">\[
+DI = \frac{Var(C(\hat{Y}))}{Var(Y)}
+\]</span></p>
+<p>To estimate discrimination, first estimate the calibration curve using the observed and predicted outcomes in the independent holdout data. Generalized additive models offer a nice method for estimating flexible yet smooth calibration curves. The ‘gam’ function in the r package ‘mgcv’, can be used to fit generalized additive models with regression splines. Note that observed outcomes are the dependent variable and predictions are the independent variable.</p>
+<p>An alternative to using generalized additive models is to use nonparametric isotonic regression and the pool-adjacent-violators algorithm (PAVA) to estimate calibration curves <span class="citation" data-cites="Dimitriadis Ayer">(<a href="#ref-Ayer" role="doc-biblioref">Ayer et al., 1955</a>; <a href="#ref-Dimitriadis" role="doc-biblioref">Dimitriadis et al., 2021</a>)</span>. PAVA is an appealing bin-and-count method because it is fast, non-parametric, has a monotonicity constraint for regularization, has automatic bin determination, and is a maximum likelihood estimator <span class="citation" data-cites="Ayer Leeuw">(<a href="#ref-Ayer" role="doc-biblioref">Ayer et al., 1955</a>; <a href="#ref-Leeuw" role="doc-biblioref">Leeuw et al., 2009</a>)</span>. We find that this method is helpful for confirming the shape of the calibration curve in a robust, non-parametric manner. However, we note that PAVA is more data-hungry than generalized additive models, and may not be appropriate for smaller data sets. Furthermore, we have observed that <span class="math inline">\(\mathrm{R^2}\)</span> estimates based on PAVA tend to be systematically higher than direct estimates of <span class="math inline">\(\mathrm{R^2}\)</span> or estimates of <span class="math inline">\(\mathrm{R^2}\)</span> based on generalized additive models, even when the estimated calibration curves appear to be visually very similar.</p>
+<p>For smaller sample sizes, it may be necessary to estimate only the calibration line and assume the calibration curve is equal to the calibration line. However, note that in this case the <span class="math inline">\(r^2\)</span> and <span class="math inline">\(\mathrm{DI}\)</span> estimates will necessarily be equal and curvature will not be evaluated, so we must assume that departures from linearity are minor for the performance metrics to be meaningful. We note that a popular use of calibration lines is examination of their intercept and slope. While this may be helpful for some descriptive purposes, we do not recommend these to be the sole metrics used for evaluation of calibration. For further details see the <a href="#appendix-a">Appendix</a>.</p>
+<p>Once the calibration curve is fit, calibrate the original predictions by transforming them via the estimated calibration curve, <span class="math inline">\(\hat{C}(\hat{Y})\)</span>. Discrimination can then be estimated as the empirical variance of the calibrated predictions. Estimating <span class="math inline">\(\mathrm{DI}\)</span> is then as simple as dividing the estimated discrimination by the empirical variance of the observed outcomes:</p>
+<p><span class="math display">\[
+\mathrm{\widehat{DI}} = \frac{\sum\bigg(\hat{C}(\hat{Y}) - \overline{\hat{C}(\hat{Y})}\bigg)^2}{\sum\big(Y-\overline{Y}\big)^2}
+\]</span></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit calibration curve</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>cal_fun <span class="ot">&lt;-</span> <span class="fu">gam</span>(observed_outcomes <span class="sc">~</span> <span class="fu">s</span>(original_predictions, <span class="at">k=</span><span class="dv">3</span>), <span class="at">na.action =</span> <span class="st">"na.omit"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain calibrated predictions</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>calibrated_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(cal_fun, <span class="fu">data.frame</span>(<span class="at">original_predictions =</span> original_predictions))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate DI</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>DI <span class="ot">&lt;-</span> <span class="fu">var</span>(calibrated_predictions)<span class="sc">/</span><span class="fu">var</span>(observed_outcomes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="estimating-mathrmmi" class="level3">
+<h3 class="anchored" data-anchor-id="estimating-mathrmmi">Estimating <span class="math inline">\(\mathrm{MI}\)</span></h3>
+<p>The calibrated predictions will also be used to estimate the miscalibration index. Recall that <span class="math inline">\(\mathrm{MI}\)</span> is miscalibration normalized by the variance of the observed outcomes:</p>
+<p><span class="math display">\[MI = \frac{E\big[(C(\hat{Y}) - \hat{Y})^2\big]}{Var(Y)}\]</span></p>
+<p>To estimate miscalibration, simply take the empirical mean of the squared differences between the original predictions and the predictions transformed by the calibration curve. Divide by the empirical variance of the observed outcomes to estimate <span class="math inline">\(\mathrm{MI}\)</span>:</p>
+<p><span class="math display">\[\widehat{MI} = \frac{\sum\big(\hat{C}(\hat{Y}) - \hat{Y}\big)^2}{\sum\big(Y-\overline{Y}\big)^2}\]</span></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate MI</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>MI <span class="ot">&lt;-</span> <span class="fu">mean</span>((calibrated_predictions <span class="sc">-</span> original_predictions)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">var</span>(observed_outcomes)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="estimating-mathrmr2" class="level3">
+<h3 class="anchored" data-anchor-id="estimating-mathrmr2">Estimating <span class="math inline">\(\mathrm{R^2}\)</span></h3>
+<p>Once <span class="math inline">\(\widehat{\mathrm{DI}}\)</span> and <span class="math inline">\(\widehat{\mathrm{MI}}\)</span> are calculated using the calibration curve, an estimate of <span class="math inline">\(\mathrm{R^2}\)</span> based on the calibration curve can then easily be obtained by subtracting <span class="math inline">\(\widehat{\mathrm{MI}}\)</span> from <span class="math inline">\(\widehat{\mathrm{DI}}\)</span>. Denote this estimate of <span class="math inline">\(\mathrm{R^2}\)</span> based on the calibration curve with a subscript ‘C’ for ‘calibration’:</p>
+<p><span class="math display">\[\widehat{\mathrm{R_{C}^2}} = \widehat{\mathrm{DI}} - \widehat{\mathrm{MI}}\]</span></p>
+<p>Note that <span class="math inline">\(\mathrm{R}^2\)</span> can also be estimated directly, without needing to first estimate a calibration curve, by calculating one minus the empirical mean squared error between the original predictions and the observed outcomes divided by the variance of the observed outcome. Denote this direct estimate of <span class="math inline">\(\mathrm{R^2}\)</span> with a subscript ‘D’ for ‘direct’. In our experience, <span class="math inline">\(\widehat{\mathrm{R_{C}^2}}\)</span> is nearly identical to <span class="math inline">\(\widehat{\mathrm{R_{D}^2}}\)</span> when the calibration curve has been estimated using the default smoother in the ‘gam’ function from the ‘mgcv’ R package.</p>
+<p><span class="math display">\[\widehat{\mathrm{R_{D}^2}} = 1-\frac{\sum\big(Y-\hat{Y}\big)^2}{\sum\big(Y-\overline{Y}\big)^2}\]</span></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate of R^2 based on the calibration curve</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>R2 <span class="ot">&lt;-</span> DI <span class="sc">-</span> MI</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Direct estimate of R^2</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>R2_direct <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (<span class="fu">sum</span>((observed_outcomes <span class="sc">-</span> original_predictions)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> ((<span class="fu">length</span>(original_predictions) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">var</span>(observed_outcomes)))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="estimating-mathrmr2-1" class="level3">
+<h3 class="anchored" data-anchor-id="estimating-mathrmr2-1">Estimating <span class="math inline">\(\mathrm{r^2}\)</span></h3>
+<p>To estimate <span class="math inline">\(\mathrm{r}^2\)</span>, simply calculate the squared Pearson correlation coefficient between the observed outcomes and the original predictions:</p>
+<p><span class="math display">\[\widehat{r^2}=cor(Y,\hat{Y}_{original})^2\]</span></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Direct estimate of r^2</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>r2_direct <span class="ot">&lt;-</span> <span class="fu">cor</span>(original_predictions, observed_outcomes)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">Example</h2>
+<p>Geographic atrophy (GA) is an advanced form of age-related macular degeneration (AMD) that leads to vision loss. GA progression can be assessed by the change in GA lesion area (<span class="math inline">\(mm^2\)</span>) over time using Fundus Autofluorescence (FAF) images. Salvi et al.&nbsp;use data from several clinical trials and observational studies to develop deep learning (DL) models that can predict the future region of growth (ROG) of GA lesions at l-year using FAF images <span class="citation" data-cites="GAmanuscript">(<a href="#ref-GAmanuscript" role="doc-biblioref">Salvi et al., 2023</a>)</span>.</p>
+<p>To develop and evaluate the models, the data were split into a development set (<span class="math inline">\(n=388\)</span>) and test set (<span class="math inline">\(n=209\)</span>). The development set was further split into a training (<span class="math inline">\(n=310\)</span>) and validation (<span class="math inline">\(n=78\)</span>) set. Models were built using the training set, selected using the validation set and evaluated using the test set. See Salvi et al.&nbsp;for further details around the development of the various DL models.</p>
+<center>
+<p><img src="images/GA_progression.png" class="img-fluid"></p>
+</center>
+<p>To demonstrate how to use the previously discussed metrics to evaluate model performance, we estimate the metrics for one of the DL models from this publication (referred to as model #5 multiclass whole lesion in the manuscript), before and after recalibration based on the test set <span class="citation" data-cites="GAmanuscript">(<a href="#ref-GAmanuscript" role="doc-biblioref">Salvi et al., 2023</a>)</span>.</p>
+<p><a href="#tbl-gametrics" class="quarto-xref">Table&nbsp;2</a> shows the metric estimates for the model in the test set. The first row of <a href="#tbl-gametrics" class="quarto-xref">Table&nbsp;2</a> shows the metric estimates prior to recalibration. The model is imperfectly calibrated, demonstrated visually with the calibration plot in <a href="#fig-calplot" class="quarto-xref">Figure&nbsp;7</a> and with the relatively high estimate of the miscalibration index (<span class="math inline">\(\widehat{\mathrm{MI}}=0.338\)</span>). However, the estimated discrimination index is relatively high, <span class="math inline">\(\widehat{\mathrm{DI}}=0.678\)</span>. The fundamental decomposition tells us that <span class="math inline">\(\widehat{\mathrm{R^2}}\)</span> could reach this value if the model were calibrated. The shape of the calibration curve and the low estimate of the nonlinearity index (<span class="math inline">\(\widehat{\mathrm{NI}}=0.030\)</span>) indicate that linear recalibration would go a long way in improving the model’s accuracy</p>
+<center>
+<div id="fig-calplot" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-calplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/blog_plot1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-calplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Predicted vs observed outcomes in the test set for the whole lesion model from Salvi et al.
+</figcaption>
+</figure>
+</div>
+</center>
+<div id="tbl-gametrics" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-gametrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Performance metrics estimated on the test set based on original, linearly recalibrated and recalibrated results
+</figcaption>
+<div aria-describedby="tbl-gametrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Predictor</th>
+<th style="text-align: center;"><span class="math inline">\(\widehat{\mathrm{R^2}}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\widehat{\mathrm{r^2}}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\widehat{\mathrm{DI}}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\widehat{\mathrm{MI}}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\widehat{\mathrm{NI}}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\hat{Y}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.338\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.648\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.678\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.338\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.030\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(L(\hat{Y})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.648\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.648\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.678\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.030\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.030\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(C(\hat{Y})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.678\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.678\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.678\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.000\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.000\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The second row of <a href="#tbl-gametrics" class="quarto-xref">Table&nbsp;2</a> shows the metric estimates after linearly recalibrating the model. The miscalibration index decreases to <span class="math inline">\(\widehat{\mathrm{MI}}=0.030\)</span> and <span class="math inline">\(\widehat{\mathrm{R^2}}\)</span> increases to <span class="math inline">\(\widehat{\mathrm{R^2}}=\widehat{\mathrm{r^2}}=0.648\)</span>, as expected. Since recalibration does not affect discrimination, <span class="math inline">\(\widehat{\mathrm{DI}}\)</span> remains the same. Finally, the bottom row of <a href="#tbl-gametrics" class="quarto-xref">Table&nbsp;2</a> shows the metric estimates after recalibrating the model with the estimated calibration curve (the red gam curve in <a href="#fig-calplot" class="quarto-xref">Figure&nbsp;7</a>). As expected, after transforming the predictions via <span class="math inline">\(C(\hat{Y})\)</span>, <span class="math inline">\(\widehat{\mathrm{MI}}=0\)</span> and <span class="math inline">\(\widehat{\mathrm{R^2}}\)</span> has increased to <span class="math inline">\(\widehat{\mathrm{DI}}\)</span>.</p>
+</section>
+</section>
+<section id="summarykey-points" class="level1">
+<h1>Summary/Key Points</h1>
+<ul>
+<li><p>The general quality of predictions is assessed by accuracy, calibration, and discrimination. These three evaluation domains are often assessed completely independently of each other.</p></li>
+<li><p>We propose an approach that unifies these concepts via a scaled decomposition of accuracy into miscalibration and discrimination, <span class="math inline">\(R^2 = \mathrm{DI} - \mathrm{MI}\)</span>. This decomposition is unitless and clarifies that <span class="math inline">\(\mathrm{DI}\)</span> is the accuracy when there is no miscalibration, equivalently when the predictions are re-calibrated using the calibration curve.</p></li>
+<li><p>Interestingly, <span class="math inline">\(r^2\)</span> can be interpreted as the <span class="math inline">\(R^2\)</span> for the best linear recalibration. That metric is also inherently of interest for some applications such as covariate adjustment.</p></li>
+<li><p>The three key metrics are <span class="math inline">\(R^2\)</span>, <span class="math inline">\(r^2\)</span> and <span class="math inline">\(\mathrm{DI}\)</span> and they satisfy a key inequality, <span class="math inline">\(R^2 \leq r^2 \leq DI\)</span>. The remaining metrics of <span class="math inline">\(\mathrm{MI}\)</span> and <span class="math inline">\(\mathrm{NI}\)</span> are derived from these.</p></li>
+<li><p>Discrimination can never be improved via recalibration, but miscalibration and accuracy can. These metrics are very informative for assessing how much accuracy can be improved via linear recalibration and recalibration via the calibration curve.</p></li>
+</ul>
+<p>To understand how the metrics and decompositions apply to binary outcomes and generalize beyond quadratic loss, see <a href="https://schiffmc.pages.roche.com/stats4datascience/posts/three_metrics_binary/">Part 2 of this post</a>.</p>
+</section>
+<section id="appendix" class="level1">
+<h1>Appendix</h1>
+<section id="appendix-a" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-a">Appendix A</h2>
+<section id="a-note-on-the-intercept-and-slope-of-lhaty" class="level4">
+<h4 class="anchored" data-anchor-id="a-note-on-the-intercept-and-slope-of-lhaty"><em>A Note on the Intercept and Slope of <span class="math inline">\(L(\hat{Y})\)</span></em></h4>
+<p>Calibration is often assessed by reporting the intercept and slope of the calibration line <span class="math inline">\(L(\hat{Y})\)</span> <span class="citation" data-cites="Steyerberg2014 CalSlope calhierarchy">(<a href="#ref-calhierarchy" role="doc-biblioref">Calster et al., 2016</a>; <a href="#ref-CalSlope" role="doc-biblioref">Stevensa et al., 2020</a>; <a href="#ref-Steyerberg2014" role="doc-biblioref">Steyerberg et al., 2014</a>)</span>. An intercept of 0 and slope of 1 correspond to perfect calibration if the calibration curve is linear. The intercept of <span class="math inline">\(L(\hat{Y})\)</span> is generally interpreted as a measure of “calibration in the large”, i.e.&nbsp;how different the mean outcome is from the mean prediction. The slope of <span class="math inline">\(L(\hat{Y})\)</span> can be interpreted as a measure of overfitting (slope &lt; 1) or underfitting (slope &gt; 1) during model development and when performing internal validation.</p>
+<p>However, as metrics for miscalibration, the intercept and slope of <span class="math inline">\(L(\hat{Y})\)</span> have limitations. If the calibration function is nonlinear, calibration performance may not be well assessed by the calibration line. The <span class="math inline">\(\mathrm{MI}\)</span> metric discussed above, however, is appropriate for any shape the calibration function may have. The presence of nonlinear miscalibration can be assessed via a Nonlinearity Index <span class="math inline">\(NI = DI - r^2\)</span>. <span class="math inline">\(NI &gt;= 0\)</span> by the fundamental inequality and <span class="math inline">\(NI=0\)</span> if and only if the calibration curve is linear. When <span class="math inline">\(NI&gt;0\)</span>, it indicates how much recalibration via the calibration curve improves accuracy over recalibration via the calibration line.</p>
+<p>Furthermore, since there are two parameters, model comparisons for miscalibration using the intercept and slope of <span class="math inline">\(L(\hat{Y})\)</span> are only partially ordered since they cannot be compared based on these parameters if one has a better intercept and a worse slope than the other. <span class="math inline">\(MI\)</span>, on the other hand, is a single metric that enables comparison of any two models.</p>
+<p>Even if the calibration curve is linear and the prediction model is calibrated in the large, there is an additional issue: the calibration intercept and slope do not take into account the distribution of the predicted outcomes. Unless the slope of the calibration line is 1, the discrepancies between the predicted outcomes and the calibration line will depend on the predicted outcomes and the distribution of discrepancies will depend on the distribution of predictions. <span class="math inline">\(MI\)</span> accounts for this since it captures the expected squared discrepancies over the distribution of predictions, but the intercept and slope of <span class="math inline">\(L(\hat{Y})\)</span> do not.</p>
+<p>For these reasons, we prefer to do the following to gain a comprehensive understanding of miscalibration:</p>
+<ul>
+<li>Focus on <span class="math inline">\(R^2\)</span>, <span class="math inline">\(r^2\)</span>, <span class="math inline">\(\mathrm{DI}\)</span>, <span class="math inline">\(\mathrm{MI}\)</span> and <span class="math inline">\(NI\)</span></li>
+<li>If the evaluation data set is too small to estimate a flexible calibration curve, estimate a calibration line and calculate the above metrics using that line as the calibration curve. Since <span class="math inline">\(r^2 = DI\)</span> and <span class="math inline">\(NI = 0\)</span> in this case, only a subset of the above metrics needs to be reported. Note, <span class="math inline">\(MI\)</span> should still be reported even if recalibration was done with a linear function.</li>
+<li>If <span class="math inline">\(NI \approx 0\)</span>, the intercept and slope of <span class="math inline">\(L(\hat{Y})\)</span> may also be reported for the purposes of describing or approximating the calibration curve.</li>
+</ul>
+</section>
+</section>
+<section id="appendix-b" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-b">Appendix B</h2>
+<section id="proof-that-predictions-transformed-via-the-calibration-curve-are-calibrated" class="level4">
+<h4 class="anchored" data-anchor-id="proof-that-predictions-transformed-via-the-calibration-curve-are-calibrated"><em>Proof that predictions transformed via the calibration curve are calibrated</em></h4>
+<p>If a model is miscalibrated, its predictions can be transformed via the calibration curve <span class="math inline">\(C_{Y,\hat{Y}}\)</span>. To show this, note that the calibration curve for the new predictions <span class="math inline">\(C_{Y,\hat{Y}}(\hat{Y})\)</span> is the identity function:</p>
+<p><span class="math display">\[
+\begin{align}
+  \mathrm{C}_{Y,\mathrm{C}_{Y,\hat{Y}}(\hat{Y})}(\mathrm{C}_{Y,\hat{Y}}(\hat{Y})) &amp;= \mathbb{E}\big[Y \mid \mathrm{C}_{Y,\hat{Y}}(\hat{Y})\big] \notag \\
+  &amp;= \mathbb{E}\big[Y \mid \mathbb{E}[Y \mid \hat{Y}]\big] \notag \\
+  &amp;= \mathbb{E}\big[\mathbb{E}\big[Y \mid \hat{Y},\mathbb{E}[Y \mid \hat{Y}]\big] \mid \mathbb{E}[Y \mid \hat{Y}]\big] \notag \\
+  &amp;= \mathbb{E}\big[\mathbb{E}[Y \mid \hat{Y}] \mid \mathbb{E}[Y \mid \hat{Y}]\big] \notag \\
+  &amp;= \mathbb{E}[Y \mid \hat{Y}] \notag \\
+  &amp;= \mathrm{C}_{Y,\hat{Y}}(\hat{Y})
+\end{align}
+\]</span></p>
+<p>And therefore <span class="math inline">\(\mathrm{MI}=0\)</span> after transforming the original predictions with <span class="math inline">\(C_{Y,\hat{Y}}\)</span>:</p>
+<p><span id="eq-MI-cal"><span class="math display">\[
+\begin{align}
+  \mathrm{MI} &amp;=  \frac{\mathbb{E}\Big[\Big(\mathrm{C}_{Y,\mathrm{C}_{Y,\hat{Y}}(\hat{Y})}(\mathrm{C}_{Y,\hat{Y}}(\hat{Y})) - \mathrm{C}_{Y,\hat{Y}}(\hat{Y})\Big)^2\big]}{Var(Y)} \\
+  &amp;= \frac{\mathbb{E}\Big[\Big(\mathrm{C}_{Y,\hat{Y}}(\hat{Y}) - \mathrm{C}_{Y,\hat{Y}}(\hat{Y})\Big)^2\big]}{Var(Y)} \notag \\
+  &amp;= 0
+\end{align}
+\tag{9}\]</span></span></p>
+</section>
+<section id="proof-that-0leqmathrmdileq1" class="level4">
+<h4 class="anchored" data-anchor-id="proof-that-0leqmathrmdileq1"><em>Proof that <span class="math inline">\(0\leq\mathrm{DI}\leq1\)</span></em></h4>
+<p>In general, the <span class="math inline">\(\mathrm{DI}\)</span> is a non-negative number that can be at most <span class="math inline">\(1\)</span> since</p>
+<p><span id="eq-DI-leq1"><span class="math display">\[
+\begin{align}
+  \mathrm{DI} &amp;=  \frac{Var\Big( \mathrm{C}_{Y,\hat{Y}}(\hat{Y})\Big)}{Var(Y)} \\
+  &amp;= \frac{Var(\mathbb{E}[Y|\hat{Y}])}{Var(Y)} \\
+  &amp;= \frac{Vary(Y) - \mathbb{E}(Var[Y|\hat{Y}])}{Var(Y)} \\
+  &amp;\leq 1
+\end{align}
+\tag{10}\]</span></span></p>
+</section>
+<section id="proof-that-transformations-do-not-affect-mathrmdi" class="level4">
+<h4 class="anchored" data-anchor-id="proof-that-transformations-do-not-affect-mathrmdi"><em>Proof that transformations do not affect <span class="math inline">\(\mathrm{DI}\)</span></em></h4>
+<p><span id="eq-DI-cal"><span class="math display">\[
+\begin{align}
+  DI \space of \space calibrated \space predictions &amp;= \frac{Var\big(\mathrm{C}_{Y,\mathrm{C}_{Y,\hat{Y}}(\hat{Y})}(\mathrm{C}_{Y,\hat{Y}}(\hat{Y}))\big)}{Var(Y)} \notag \\
+  &amp;= \frac{Var\big(\mathrm{C}_{Y,\hat{Y}}(\hat{Y})\big)}{Var(Y)} \notag \\
+  &amp;= DI \space of \space original \space predictions
+\end{align}
+\tag{11}\]</span></span></p>
+</section>
+<section id="proof-of-the-mathrmmse-decomposition" class="level4">
+<h4 class="anchored" data-anchor-id="proof-of-the-mathrmmse-decomposition"><em>Proof of the <span class="math inline">\(\mathrm{MSE}\)</span> decomposition</em></h4>
+<p><span class="math display">\[
+\begin{align}
+  \mathrm{MSE} &amp;= \mathbb{E}\big[(Y-\hat{Y})^2\big] \\
+&amp;= \mathbb{E}\big[\mathbb{E}[(Y-\hat{Y})^2 \mid \hat{Y}]\big] \\
+&amp;= \mathbb{E}\big[\mathbb{E}[(Y-\mathbb{E}[Y \mid \hat{Y}] +\mathbb{E}[Y \mid \hat{Y}] - \hat{Y})^2 \mid \hat{Y}]\big] \\
+&amp;= \mathbb{E}\big[\mathbb{E}[(Y-\mathbb{E}[Y \mid \hat{Y}])^2 \mid \hat{Y}]\big] +\mathbb{E}\big[\mathbb{E}[(\mathbb{E}[Y \mid \hat{Y}] - \hat{Y})^2 \mid \hat{Y}]\big] \\
+&amp;= \mathbb{E}\big[Var(Y \mid \hat{Y})\big] +\mathbb{E}\big[(\mathbb{E}[Y \mid \hat{Y}] - \hat{Y})^2 \big] \\
+&amp;= Var(Y) - Var(\mathbb{E}[Y \mid \hat{Y}]) + \mathbb{E}\big[(\mathbb{E}[Y \mid \hat{Y}] - \hat{Y})^2 \big] \\
+&amp;= Var(Y) - Var(\mathrm{C}_{Y,\hat{Y}}(\hat{Y})) + \mathbb{E}\big[(\mathrm{C}_{Y,\hat{Y}}(\hat{Y}) - \hat{Y})^2 \big] \\
+\end{align}
+\]</span></p>
+</section>
+<section id="proof-of-the-fundamental-decomposition-of-r2" class="level4">
+<h4 class="anchored" data-anchor-id="proof-of-the-fundamental-decomposition-of-r2"><em>Proof of the fundamental decomposition of <span class="math inline">\(R^2\)</span></em></h4>
+<p><span id="eq-R2-decomp"><span class="math display">\[
+\begin{align}
+  R^2&amp; = 1-\frac{\mathrm{MSE}}{Var(Y)} \\
+&amp; = 1-\frac{\mathrm{Var(Y) - Var(\mathrm{C}_{Y,\hat{Y}}(\hat{Y})) + \mathbb{E}\big[(\mathrm{C}_{Y,\hat{Y}}(\hat{Y}) - \hat{Y})^2 \big]}}{Var(Y)} \\
+&amp;= \frac{Var(\mathrm{C}_{Y,\hat{Y}}(\hat{Y}))}{Var(Y)} -  \frac{\mathbb{E}\big[(\mathrm{C}_{Y,\hat{Y}}(\hat{Y}) - \hat{Y})^2 \big]}{Var(Y)} \\
+&amp;= DI - MI
+\end{align}
+\tag{12}\]</span></span></p>
+</section>
+<section id="proof-that-mathrmc_yhatyhaty-maximizes-r2" class="level4">
+<h4 class="anchored" data-anchor-id="proof-that-mathrmc_yhatyhaty-maximizes-r2"><em>Proof that <span class="math inline">\(\mathrm{C}_{Y,\hat{Y}}(\hat{Y})\)</span> maximizes <span class="math inline">\(R^2\)</span></em></h4>
+</section>
+</section>
+</section>
+<section id="the-calibration-curve-is-the-transformation-that-maximizes-r2" class="level1 callout-definition">
+<h1>The calibration curve is the transformation that maximizes <span class="math inline">\(R^2\)</span></h1>
+<p><span id="eq-opt-trans"><span class="math display">\[
+\begin{align}
+C(\hat{Y}) &amp;= argmax_{h \in H} \space 1-\frac{\mathrm{MSE}}{Var(Y)} \\
+&amp;=argmin_{h \in H} \space \mathbb{E}\big[\big(Y-h(\hat{Y})\big)^2\big]
+\end{align}
+\tag{13}\]</span></span></p>
+</section>
+<p><span class="math display">\[
+\begin{align}
+argmax_{h \in H} \space 1-\frac{\mathrm{MSE}}{Var(Y)} &amp;=argmin_{h \in H} \space \mathbb{E}\big[\big(Y-h(\hat{Y})\big)^2\big] \\
+&amp;= argmin_{h \in H} \space \mathbb{E}\big[\big(Y-\mathbb{E}[Y|\hat{Y}]+\mathbb{E}[Y|\hat{Y}]-h(\hat{Y})\big)^2\big] \\
+&amp;= argmin_{h \in H} \space \mathbb{E}\big[\big(Y-\mathbb{E}[Y|\hat{Y}]\big)^2 + \\  &amp;2\big(Y-\mathbb{E}[Y|\hat{Y}]\big)\big(\mathbb{E}[Y|\hat{Y}]-h(\hat{Y})\big) + \big(\mathbb{E}[Y|\hat{Y}]-h(\hat{Y})\big)^2\big] \\
+&amp;= argmin_{h \in H} \space \mathbb{E}\big[\big(\mathbb{E}[Y|\hat{Y}]-h(\hat{Y})\big)^2\big] \\
+&amp;= \mathbb{E}[Y|\hat{Y}]
+\end{align}
+\]</span></p>
+<section id="proof-that-r2r2-when-predictions-are-transformed-via-the-calibration-line-lhaty" class="level4">
+<h4 class="anchored" data-anchor-id="proof-that-r2r2-when-predictions-are-transformed-via-the-calibration-line-lhaty"><em>Proof that <span class="math inline">\(R^2=r^2\)</span> when predictions are transformed via the calibration line <span class="math inline">\(L(\hat{Y})\)</span></em></h4>
+<p><span class="math display">\[
+\begin{align}
+R^2 \space for \space L(\hat{Y}) &amp;= 1-\frac{\mathbb{E}\big[\big(Y-L(\hat{Y})\big)^2\big]}{Var(Y)} \\
+&amp;= \frac{Var(Y) - \mathbb{E}\big[\big(Y-\mathbb{E}(Y)+\frac{Cov(Y,\hat{Y})}{Var(\hat{Y})}\mathbb{E}(\hat{Y})-\frac{Cov(Y,\hat{Y})}{Var(\hat{Y})}\hat{Y}\big)^2\big]}{Var(Y)} \\
+&amp;= \frac{Var(Y) - \mathbb{E}\big[Var(Y) -2\frac{Cov(Y,\hat{Y})}{Var(\hat{Y})}Cov(Y,\hat{Y})+\frac{Cov^2(Y,\hat{Y})}{Var^2(\hat{Y})}Var(\hat{Y})\big]}{Var(Y)} \\
+&amp;= \frac{Cov^2(Y,\hat{Y})}{Var(\hat{Y})Var(Y)} \\
+&amp;= cor^2(Y, \hat{Y}) \\
+\end{align}
+\]</span></p>
+</section>
+<section id="proof-that-lhaty-is-the-population-least-squares-regression-line" class="level4">
+<h4 class="anchored" data-anchor-id="proof-that-lhaty-is-the-population-least-squares-regression-line"><em>Proof that <span class="math inline">\(L(\hat{Y})\)</span> is the population least squares regression line</em></h4>
+<p>Let <span class="math inline">\(Y\)</span> be an <span class="math inline">\(n\times1\)</span> outcome vector and <span class="math inline">\(X\)</span> be an <span class="math inline">\(n\times2\)</span> design matrix with an intercept, and suppose you want to approximate <span class="math inline">\(E(Y|X)\)</span> with a simple linear function of <span class="math inline">\(X\)</span>:</p>
+<p><span class="math display">\[E(Y|X) \approx Xb\]</span></p>
+<p>The coefficients that minimize the expected squared error of the approximation are called the population least squares regression coefficients <span class="math inline">\(\beta\)</span>:</p>
+<p><span class="math display">\[ \beta = argmin_{b \in \mathbb{R}^2}\mathbb{E}\big(E(Y|X)-Xb\big)^2\]</span></p>
+<p>Taking the derivative w.r.t <span class="math inline">\(b\)</span> and setting equal to zero:</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbb{E}\big(-2X'E(Y|X) + 2(X'X)\beta \big)=0 \\
+\beta=\mathbb{E}(X'X)^{-1}\mathbb{E}(X'Y) \\ =\bigg(\mathbb{E}(Y)-\frac{Cov(Y,\hat{Y})}{Var(\hat{Y})}\mathbb{E}(\hat{Y}),\frac{Cov(Y,\hat{Y})}{Var(\hat{Y})}\bigg)' \\
+=(\alpha_{opt},\beta_{opt})' \\
+\end{align}
+\]</span></p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-Ayer" class="csl-entry" role="listitem">
+Ayer, M., Brunk, H. D., Ewing, G. M., Reid, W. T., &amp; Silverman, E. (1955). An empirical distribution function for sampling with incomplete information. <em>Ann. Math. Statist.</em>
+</div>
+<div id="ref-Calster2019" class="csl-entry" role="listitem">
+Calster, B. V., McLernon, D. J., Smeden, M. van, Wynants, L., &amp; Steyerberg, E. W. (2019). Calibration: The achilles heel of predictive analytics. <em>BMC Medicine</em>.
+</div>
+<div id="ref-calhierarchy" class="csl-entry" role="listitem">
+Calster, B. V., Nieboer, D., Vergouwe, Y., Cock, B. D., Pencina, M. J., &amp; Steyerberg, E. W. (2016). A calibration hierarchy for risk models was defined: From utopia to empirical data. <em>Journal of Clinical Epidemiology</em>.
+</div>
+<div id="ref-Calster2018" class="csl-entry" role="listitem">
+Calster, B. V., Wynants, L., Verbeek, J. F. M., Verbakel, J. Y., Christodoulou, E., Vickers, A. J., Roobol, M. J., &amp; Steyerberg, E. W. (2018). Reporting and interpreting decision curve analysis: A guide for investigators. <em>European Urology</em>.
+</div>
+<div id="ref-DeGroot" class="csl-entry" role="listitem">
+DeGroot, M. H., &amp; Fienberg, S. E. (1983). Comparing probability forecasters: Basic binary concepts and multivariate extensions. <em>Defense Technical Information Center</em>.
+</div>
+<div id="ref-Dimitriadis" class="csl-entry" role="listitem">
+Dimitriadis, T., Gneitingb, T., &amp; Jordan, A. I. (2021). Stable reliability diagrams for probabilistic classifiers. <em>PNAS</em>.
+</div>
+<div id="ref-Fissler" class="csl-entry" role="listitem">
+Fissler, T., Lorentzen, C., &amp; Mayer, M. (2022). Model comparison and calibration assessment. <em>arXiv</em>.
+</div>
+<div id="ref-Leeuw" class="csl-entry" role="listitem">
+Leeuw, J. de, Hornik, K., &amp; Mair, P. (2009). Isotone optimization in r: Pool-adjacent-violators algorithm (PAVA) and active set methods. <em>Journal of Statistical Software</em>.
+</div>
+<div id="ref-Murphy1973" class="csl-entry" role="listitem">
+Murphy, A. H. (1973). A new vector partition of the probability score. <em>Journal of Applied Meteorology and Climatology</em>.
+</div>
+<div id="ref-GAmanuscript" class="csl-entry" role="listitem">
+Salvi, A., Cluceru, J., Gao, S., Rabe, C., Yang, Q., Lee, A., Keane, P., Sadda, S., Holz, F. G., Ferrara, D., &amp; Anegondi, N. (2023). Deep learning to predict the future growth of geographic atrophy from fundus autofluorescence. <em>In Review</em>.
+</div>
+<div id="ref-schiffman" class="csl-entry" role="listitem">
+Schiffman, C., Friesenhahn, M., &amp; Rabe, C. (2023, October 26). <em>How to Get the Most Out of Prognostic Baseline Variables in Clinical Trials</em>. Retrieved from <a href="https://www.stats4datascience.com/posts/covariate_adjustment/">https://www.stats4datascience.com/posts/covariate_adjustment/</a>
+</div>
+<div id="ref-CalSlope" class="csl-entry" role="listitem">
+Stevensa, R. J., &amp; Poppe, K. K. (2020). Validation of clinical prediction models: What does the "calibration slope"" really measure? <em>Journal of Clinical Epidemiology</em>.
+</div>
+<div id="ref-Steyerberg2014" class="csl-entry" role="listitem">
+Steyerberg, E. W., &amp; Vergouwe, Y. (2014). Towards better clinical prediction models: Seven steps for development and an ABCD for validation. <em>European Heart Journal</em>.
+</div>
+<div id="ref-Steyerberg2010" class="csl-entry" role="listitem">
+Steyerberg, E. W., Vickers, A. J., Cook, N. R., Gerds, T., Gonen, M., Obuchowski, N., Pencina, M. J., &amp; Michael W. Kattan, and. (2010). Assessing the performance of prediction models: A framework for some traditional and novel measures. <em>Epidemiology</em>.
+</div>
+<div id="ref-Vickers" class="csl-entry" role="listitem">
+Vickers, A. J., &amp; Elkin, E. B. (2006). Decision curve analysis: A novel method for evaluating prediction models. <em>Med Decis Making</em>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{friesenhahn, christina rabe and courtney schiffman2023,
+  author = {Friesenhahn, Christina Rabe and Courtney Schiffman, Michel},
+  title = {Everything You Wanted to Know about {R2} but Were Afraid to
+    Ask. {Part} 1, {Using} a Fundamental Decomposition to Gain Insights
+    into Predictive Model Performance.},
+  date = {},
+  url = {https://www.go.roche.com/stats4datascience},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-friesenhahn, christina rabe and courtney schiffman2023" class="csl-entry quarto-appendix-citeas" role="listitem">
+Friesenhahn, Christina Rabe and Courtney Schiffman, M. (n.d.).
+<em>Everything you wanted to know about R2 but were afraid to ask. Part
+1, Using a fundamental decomposition to gain insights into predictive
+model performance.</em> Retrieved from <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
