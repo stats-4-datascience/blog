@@ -6,6 +6,11 @@ website:
   favicon: assets/favicon.png
   navbar:
     logo: assets/favicon.png
+    left:
+      - text: Software
+        menu: 
+          - text: stats4phc R package
+            href: https://github.com/Genentech/stats4phc
     right:
       - text: About
         href: about.qmd
