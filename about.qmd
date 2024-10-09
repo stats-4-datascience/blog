@@ -4,14 +4,12 @@ about:
   template: jolla
   links:
     - icon: code-slash
-      text: GitLab
-      href: https://code.roche.com/schiffmc 
+      text: GitHub
+      href: https://github.com/stats-4-datascience/blog
 ---
 
 <center>
-
-![](stats4datascience.png){width=60%}
-
+![](assets/stats4datascience.png){width=60%}
 </center>
 
 
