@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Courtney Schiffman">
-<meta name="author" content="Michel Friesenhahn">
 <meta name="author" content="Christina Rabe">
+<meta name="author" content="Michel Friesenhahn">
 <meta name="dcterms.date" content="2022-10-12">
 
 <title>stats4datascience - How to get the most out of prognostic baseline variables in clinical trials</title>
@@ -171,6 +171,10 @@ div.csl-indent {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
+    <a class="nav-link" href="../../software.html">
+ <span class="menu-text">Software</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../../about.html">
  <span class="menu-text">About</span></a>
   </li>  
@@ -208,7 +212,7 @@ div.csl-indent {
             </p>
         </div>
         <div class="quarto-title-meta-contents">
-      Michel Friesenhahn 
+      Christina Rabe 
     </div>
       <div class="quarto-title-meta-contents">
           <p class="affiliation">
@@ -218,7 +222,7 @@ div.csl-indent {
             </p>
         </div>
         <div class="quarto-title-meta-contents">
-      Christina Rabe 
+      Michel Friesenhahn 
     </div>
       <div class="quarto-title-meta-contents">
           <p class="affiliation">
@@ -242,7 +246,7 @@ div.csl-indent {
       <div>
       <div class="quarto-title-meta-heading">Modified</div>
       <div class="quarto-title-meta-contents">
-        <p class="date-modified">February 21, 2024</p>
+        <p class="date-modified">October 9, 2024</p>
       </div>
     </div>
       
@@ -323,7 +327,7 @@ div.csl-indent {
 <p><img src="images/new_insights.png" class="img-fluid" style="width:60.0%"></p>
 </center>
 <p>In randomized trials, a wide range of baseline covariates are collected prior to randomization. These include demographic variables, baseline outcome assessments, biomarkers from biological samples and medical images. Baseline covariates that are prognostic for trial outcomes are often used for enrichment, stratified randomization, imbalance checking and subgroup analyses. However, it is not widely recognized that one of the most powerful uses of prognostic baseline variables in randomized clinical trials is for covariate adjustment. <em>A pre-specified primary endpoint analysis that adjusts for prognostic baseline covariates is a rigorous and virtually risk-free analysis that increases precision and power.</em></p>
-<p>While the concept of covariate adjustment and its potential value for increasing trial power is decades old, historically there has been some controversy around how to ensure the validity of trial analyses without relying on model assumptions. This has been particularly challenging for non-continuous endpoints. Fortunately, there have been advancements that have resolved this controversy. Our first aim for this blog is to build on those advancements and provide concrete guidance on how to perform treatment effect estimation and inference using covariate adjustment that is both rigorous and easy-to-implement. In general, standard ANCOVA-based inference is correct <em>when the regression model is correctly specified</em>, whereas the covariate adjustment methods proposed here are asymptotically robust to model misspecification.</p>
+<p>While the concept of covariate adjustment and its potential value for increasing trial power is decades old, historically there has been some controversy around how to ensure the validity of trial analyses without relying on model assumptions. This has been particularly challenging for non-continuous endpoints. Fortunately, there have been advancements that have resolved this controversy. Our first aim for this blog is to build on those advancements and provide concrete guidance on how to perform treatment effect estimation and inference using covariate adjustment that is both rigorous and easy-to-implement. In general, standard ANCOVA-based inference is correct when the regression model is correctly specified, whereas the covariate adjustment methods proposed here are asymptotically robust to model misspecification.</p>
 <p>Furthermore, the pre-specified covariates that are currently used in clinical trials can be sub-optimal and strategies are needed to better determine which baseline covariates are best to use for adjustment. These baseline covariates could be a simple collection of individual variables or a single prediction from a complex machine learning model. External data, e.g.&nbsp;data from historical trials and observational studies, are an excellent resource for identifying and evaluating such candidate covariates. Accordingly, our second aim is to provide strategic guidance and relevant performance metrics for these evaluations.</p>
 <p>This document will be a practical how-to guide for clinical trial statisticians on effective, trustworthy, and practical use of covariate adjustment in clinical development for maximizing power and minimizing bias. We will also discuss the value of stratified randomization compared to covariate adjustment. We focus here on continuous outcomes, but many of the points discussed apply to binary and ordinal outcomes as well.</p>
 </section>
@@ -332,7 +336,7 @@ div.csl-indent {
 <center>
 <p><img src="images/collage.png" class="img-fluid" style="width:80.0%"></p>
 </center>
-<p>Covariate adjustment has recently gained popularity in a variety of industries. In drug development, the FDA has provided a <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products">draft guidance document</a> that strongly encourages its use. There are also several start-ups who offer covariate adjustment to optimize analysis of online experiments as a key use case for their prognostic models <span class="citation" data-cites="Netflix CUPED CUPAC MLRATE">(<a href="#ref-Netflix" role="doc-biblioref">Wong, Lewis, and Wardrop 2019</a>; <a href="#ref-CUPED" role="doc-biblioref">Deng et al. 2013</a>; <a href="#ref-CUPAC" role="doc-biblioref">Li, Tang, and Bauman 2020</a>; <a href="#ref-MLRATE" role="doc-biblioref">Guo et al. 2022</a>)</span>. Across these different applications, what statisticians and the FDA call covariate adjustment is frequently given alternative names, for example CUPED (controlled-experiment using pre-experiment data), CUPAC (Control Using Predictions As Covariates) and MLRATE (machine learning regression-adjusted treatment effect estimator). Companies like Owkin and Unlearn.AI focus on the use of covariate adjustment in randomized trials, hoping to potentially decrease trial sample size by incorporating machine learning <span class="citation" data-cites="owkin unlearn">(<a href="#ref-owkin" role="doc-biblioref">Trower, Balazard, and Patel 2020</a>; <a href="#ref-unlearn" role="doc-biblioref">Schuler et al. 2020</a>)</span>.</p>
+<p>Covariate adjustment has recently gained popularity in a variety of industries. In drug development, the FDA has provided a <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products">guidance document</a> that strongly encourages its use. There are also several start-ups who offer covariate adjustment to optimize analysis of online experiments as a key use case for their prognostic models <span class="citation" data-cites="Netflix CUPED CUPAC MLRATE">(<a href="#ref-Netflix" role="doc-biblioref">Wong, Lewis, and Wardrop 2019</a>; <a href="#ref-CUPED" role="doc-biblioref">Deng et al. 2013</a>; <a href="#ref-CUPAC" role="doc-biblioref">Li, Tang, and Bauman 2020</a>; <a href="#ref-MLRATE" role="doc-biblioref">Guo et al. 2022</a>)</span>. Across these different applications, what statisticians and the FDA call covariate adjustment is frequently given alternative names, for example CUPED (controlled-experiment using pre-experiment data), CUPAC (Control Using Predictions As Covariates) and MLRATE (machine learning regression-adjusted treatment effect estimator). Companies like Owkin and Unlearn.AI focus on the use of covariate adjustment in randomized trials, hoping to potentially decrease trial sample size by incorporating machine learning <span class="citation" data-cites="owkin unlearn">(<a href="#ref-owkin" role="doc-biblioref">Trower, Balazard, and Patel 2020</a>; <a href="#ref-unlearn" role="doc-biblioref">Schuler et al. 2020</a>)</span>.</p>
 <p>We heartily celebrate this increased enthusiasm for covariate adjustment in a variety of settings and hope the current blog post enables clinical trial statisticians to make the most effective use of baseline prognostic data.</p>
 </section>
 <section id="whats-the-big-deal-about-covariate-adjustment" class="level1">
@@ -356,7 +360,7 @@ div.csl-indent {
 <p></p><figcaption class="figure-caption">Figure&nbsp;2: Conditional type-1 error depending on imbalance</figcaption><p></p>
 </figure>
 </div>
-<p>How do you address concerns over imbalance? Following the analysis from Stephen Senn, the figure above shows the conditional type 1 error as a function of standardized observed imbalance for a range of assumed correlations between the baseline covariate and outcome. This shows that significance tests for imbalance (a commonly used and misguided practice) can fail to flag imbalance effects even when the conditional probability of a type 1 error well exceeds the nominal level. Therefore, significance tests do not reliably control type 1 error. Instead, Senn showed that covariate adjustment removes conditional bias from treatment effect estimates and leads to correct conditional type 1 errors of constant size.</p>
+<p>How do you address concerns over imbalance? Following the analysis from Stephen Senn, <a href="#fig-imbalence">Figure&nbsp;2</a> shows the conditional type 1 error as a function of standardized observed imbalance for a range of assumed correlations between the baseline covariate and outcome. This shows that significance tests for imbalance (a commonly used and misguided practice) can fail to flag imbalance effects even when the conditional probability of a type 1 error well exceeds the nominal level. Therefore, significance tests do not reliably control type 1 error. Instead, Senn showed that covariate adjustment removes conditional bias from treatment effect estimates and leads to correct conditional type 1 errors of constant size.</p>
 <blockquote class="blockquote">
 <p>“Analysis of covariance can be recommended on two grounds: increased power and constant conditional size. The former should be sufficient to recommend the method to those who consider that the latter is irrelevant but for those who are concerned about conditional size this is an added advantage” <span class="citation" data-cites="Senn">(<a href="#ref-Senn" role="doc-biblioref">S. J. Senn 1989</a>)</span>.</p>
 </blockquote>
@@ -444,11 +448,11 @@ Unadjusted vs.&nbsp;Adjusted
 </section>
 <section id="covariate-adjustment-is-encouraged-by-the-fda" class="level2">
 <h2 class="anchored" data-anchor-id="covariate-adjustment-is-encouraged-by-the-fda">Covariate Adjustment is Encouraged by the FDA</h2>
-<p>In a 2021 <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products">draft guidance</a>, pre-specified covariate adjustment was fully supported and encouraged by the FDA as a primary endpoint analysis in clinical trials:</p>
+<p>In a May 2023 <a href="https://www.fda.gov/drugs/drug-safety-and-availability/fda-issues-final-guidance-adjusting-covariates-randomized-clinical-trials">guidance</a>, pre-specified covariate adjustment was fully supported by the FDA as a primary endpoint analysis in clinical trials:</p>
 <blockquote class="blockquote">
-<p>“Although an unadjusted analysis is acceptable for the primary analysis, adjustment for baseline covariates will generally reduce the variability of estimation of treatment effects and thus lead to narrower confidence intervals and more powerful hypothesis testing” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span>.</p>
+<p>Sponsors can adjust for baseline covariates in the analyses of efficacy endpoints in randomized clinical trials. Doing so will generally reduce the variability of estimation of treatment effects and thus lead to narrower confidence intervals and more powerful hypothesis testing.” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2023</a>)</span>.</p>
 </blockquote>
-<p>Importantly, the guidance states that “[s]ponsors should prospectively specify the covariates and the mathematical form of the covariate adjusted estimator” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span>. We interpret this to mean that the exact working regression model form should be pre-specified before working with the trial data. Independent data from observational cohorts or previous trials can be used to select or develop covariates. These covariates may be existing baseline variables or even the output from a multivariable prediction model which takes as input other baseline covariates.</p>
+<p>Importantly, the guidance states that “[s]ponsors should prospectively specify the detailed procedures for executing covariate adjusted analysis before any unblinding of comparative data. FDA review will emphasize the prespecified primary analysis rather than post-hoc analyses using different models or covariates”<span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2023</a>)</span>. We interpret this to mean that the exact working regression model form should be pre-specified before working with the trial data. Independent data from observational cohorts or previous trials can be used to select or develop covariates. These covariates may be existing baseline variables or even the output from a multivariable prediction model which takes as input other baseline covariates.</p>
 <p>In contrast to pre-specifying an ANCOVA regression model, there is active research into applying machine learning directly to the unblinded trial data under investigation (as opposed to historical data) <span class="citation" data-cites="covid2 covid Tsiatis2008 Tian2012">(<a href="#ref-covid2" role="doc-biblioref">Williams, Rosenblum, and Diaz 2021</a>; <a href="#ref-covid" role="doc-biblioref">Benkeser et al. 2020</a>; <a href="#ref-Tsiatis2008" role="doc-biblioref">Tsiatis et al. 2008</a>; <a href="#ref-Tian2012" role="doc-biblioref">Tian et al. 2012</a>)</span> as part of the covariate adjusted analysis. While the role machine learning procedures can play in covariate adjustment is an interesting and important area of research, we do not yet recommend using them as part of the primary endpoint analysis of a clinical trial due to several considerations. First, the finite sample properties of the estimators are not understood. Second, these methods add complexity and burden to the study yet are unlikely to provide meaningful benefits.</p>
 <p>It may not be appreciated that a lot of things need to happen between the unblinding of a randomized clinical trial and the reporting of topline results. Outputs and code are quality controlled, pre-specified sensitivity analyses are performed, and internal reviews are conducted with key decision makers and stakeholders. All of these activities need to occur in a tight time frame for practical considerations such as appropriate control of insider information.</p>
 <p>In addition, during the planning phase, many choices have to be made when applying machine learning directly to the trial data such as which covariates to present to the machine learning procedure, the method of cross validation to use, which machines to include if using ensemble learning and how to perform standard error estimation. These choices, many of which are based on simulation studies, add to the difficulty of finalizing the statistical analysis plan.</p>
@@ -459,7 +463,7 @@ Unadjusted vs.&nbsp;Adjusted
 <h1>How to Perform Covariate Adjustment</h1>
 <section id="standardized-regression-estimator" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="standardized-regression-estimator">Standardized Regression Estimator</h2>
-<p>Table 1 provides instructions and code for estimating the Treatment Arm Means (TAMs) and the marginal ATE (in this case, the difference in means) using covariate adjustment. The example code shows how to estimate these quantities for trials with two treatment arms, but easily generalizes to more than two arms. This estimator is often referred to as the <strong>standardized regression estimator</strong>, and is also an example of a targeted maximum likelihood estimator. There are other consistent estimators of the marginal ATE that use covariate adjustment (see <span class="citation" data-cites="Colantuoni2015">Colantuoni and Rosenblum (<a href="#ref-Colantuoni2015" role="doc-biblioref">2015</a>)</span> for examples). However, we suggest using the standardized regression estimator because it is easy to use, “statistically reliable” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span>, has comparable power and can also be used to estimate TAMS and marginal ATEs for non-continuous outcomes.</p>
+<p><a href="#tbl-estimation">Table&nbsp;1</a> provides instructions and code for estimating the Treatment Arm Means (TAMs) and the marginal ATE (in this case, the difference in means) using covariate adjustment. The example code shows how to estimate these quantities for trials with two treatment arms, but easily generalizes to more than two arms. This estimator is often referred to as the <strong>standardized regression estimator</strong>, and is also an example of a targeted maximum likelihood estimator. There are other consistent estimators of the marginal ATE that use covariate adjustment (see <span class="citation" data-cites="Colantuoni2015">Colantuoni and Rosenblum (<a href="#ref-Colantuoni2015" role="doc-biblioref">2015</a>)</span> for examples). However, we suggest using the standardized regression estimator because it is easy to use, is a “reliable method for covariate adjustment” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2023</a>)</span>, has comparable power and can also be used to estimate TAMS and marginal ATEs for non-continuous outcomes.</p>
 <p>In the notation below, <span class="math inline">\(A\)</span> is a two-level factor indicating treatment assignment, <span class="math inline">\(Y\)</span> is the observed outcome, <span class="math inline">\(X\)</span> is a baseline covariate, <span class="math inline">\(E[Y|a, X_i] = \mu(a,X_i)\)</span> is the expected value of <span class="math inline">\(Y\)</span> for patient <span class="math inline">\(i\)</span> given their treatment assignment <span class="math inline">\(A_i=a\)</span> and baseline covariate <span class="math inline">\(X_i\)</span>, <span class="math inline">\(\hat{\mu}(a,X_i)\)</span> is the predicted outcome for patient <span class="math inline">\(i\)</span> from the working regression model and an estimate of <span class="math inline">\(\mu(a,X_i)\)</span>, and <span class="math inline">\(N\)</span> is the total trial sample size. The standardized regression estimator for the mean outcome in treatment arm <span class="math inline">\(A=a\)</span> is:</p>
 <p><span id="eq-std-reg-mean"><span class="math display">\[
 \widehat{TAM_a}=\frac{1}{N}\sum_{i=1}^{N}\hat{\mu}(a,X_i)
@@ -533,13 +537,13 @@ Unadjusted vs.&nbsp;Adjusted
 </table>
 </div>
 </div>
-<p>In the example code in Table 1, <span class="math inline">\(X\)</span> is a single covariate, but <span class="math inline">\(X\)</span> can also be a matrix containing a set of individual covariates, a prediction from an independent prognostic model, or a combination thereof. When the working regression model is an additive OLS regression, the standardized regression estimate of the difference in means marginal ATE equals the estimated coefficient for <span class="math inline">\(A\)</span>. This is also true for an interaction model when the covariates are centered. Note that, unlike OLS regression, in generalized linear models the estimated coefficient for treatment does not translate into a marginal ATE.</p>
+<p>In the example code in <a href="#tbl-estimation">Table&nbsp;1</a>, <span class="math inline">\(X\)</span> is a single covariate, but <span class="math inline">\(X\)</span> can also be a matrix containing a set of individual covariates, a prediction from an independent prognostic model, or a combination thereof. When the working regression model is an additive OLS regression, the standardized regression estimate of the difference in means marginal ATE equals the estimated coefficient for <span class="math inline">\(A\)</span>. This is also true for an interaction model when the covariates are centered. Note that, unlike OLS regression, in generalized linear models the estimated coefficient for treatment does not translate into a marginal ATE.</p>
 <p>Theoretically, it is possible to lose precision with covariate adjustment when using an additive model compared to an unadjusted analysis. In contrast, a standardized regression estimator that uses an interaction working regression model is asymptotically guaranteed to be at least as precise as an unadjusted estimator or adjustment with an additive model. However, it is only under unrealistic conditions that covariate adjustment with an additive model will be less precise than an unadjusted estimator. What is more, if randomization is 1:1 or the covariances between covariates and outcome are equal across treatment arms, then covariate adjustment with an additive model will be as efficient as with an interaction model. In our experience, interaction models do not lead to considerable gains in precision over additive models. Likewise, Tsiatis et al. (2001) performed simulations comparing precision when using an additive vs.&nbsp;an interaction model and “found the loss of efficiency to be trivial in all cases” <span class="citation" data-cites="Tsiatis2001">(<a href="#ref-Tsiatis2001" role="doc-biblioref">Yang and Tsiatis 2001</a>)</span>. Therefore, <strong>additive models are a good default choice</strong> especially if your trial sample size is too small to support treatment-by-covariate interactions (see <a href="#determining-your-model-budget">model budget section</a>).</p>
-<p>In case of missing values in baseline covariates, the FDA draft guidance suggests that “covariate adjustment is generally robust to the handling of subjects with missing baseline covariates. Missing baseline covariate values can be singly or multiply imputed, or missingness indicators (Groenwold et al.&nbsp;2012) can be added to the model used for covariate adjustment. Sponsors should not perform imputation separately for different treatment groups, and sponsors should ensure that imputed baseline values are not dependent on any post-baseline variables, including the outcome” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span>. A baseline covariate that has too many missing values should not be used for adjustment, but if the number of missing values is small, we recommend simple, single imputation as opposed to using indicator variables in order to spend the model budget wisely.</p>
+<p>In case of missing values in baseline covariates, a baseline covariate that has too many missing values should not be used for adjustment, but if the number of missing values is small, we recommend simple, single imputation as opposed to using indicator variables in order to spend the model budget wisely.</p>
 </section>
 <section id="inference-for-tams-and-ates" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="inference-for-tams-and-ates">Inference for TAMs and ATEs</h2>
-<p>We suggest using robust standard error estimators from the targeted maximum likelihood estimation (TMLE) literature because they are robust to model misspecification, are fast and easy to implement with a few lines of code, are valid under any randomization ratio and data generating distribution, provide standard error estimates for both ATEs and treatment arm means, are aligned with the superpopulation framework and are deterministic.</p>
+<p>We suggest using robust standard error estimators from the targeted maximum likelihood estimation (TMLE) literature because they are robust to model misspecification, are fast and easy to implement with a few lines of code, are valid under any randomization ratio and data generating distribution, provide standard error estimates for both ATEs and treatment arm means, are aligned with the superpopulation framework and are deterministic <span class="citation" data-cites="TMLE2010">(<a href="#ref-TMLE2010" role="doc-biblioref">Rosenblum and Laan 2010</a>)</span>.</p>
 <p>Let <span class="math inline">\(I(A_i=a)\)</span> be an indicator of patient <span class="math inline">\(i\)</span> receiving treatment <span class="math inline">\(A=a\)</span> and <span class="math inline">\(p(A=a)\)</span> be the probability of being assigned to treatment arm <span class="math inline">\(A=a\)</span>. The TMLE <strong>standard error estimate for the mean of treatment arm <span class="math inline">\(A=a\)</span></strong> is:</p>
 <p><span id="eq-std-err-est-mean"><span class="math display">\[
 \sqrt{\frac{\frac{1}{N}\sum_{i=1}^{N}\Bigg(\frac{I(A_i=a)(Y_i-\hat{\mu}(a,X_i))}{p(A=a)}+\hat{\mu}(a,X_i)-\frac{1}{N}\sum_{i=1}^{N}\hat{\mu}(a,X_i)\Bigg)^2}{N}}
@@ -564,13 +568,13 @@ Unadjusted vs.&nbsp;Adjusted
 </div>
 <p>Using the estimated standard errors and the asymptotic normality of the standardized regression estimator, one can then easily obtain <span class="math inline">\(p\)</span>-values and <span class="math inline">\(95\%\)</span> confidence intervals for both the treatment arm means and the marginal ATE.</p>
 <p>We note that the above standard error estimates assume observations are i.i.d. (i.e.&nbsp;randomization is not stratified), and we address this assumption in a <a href="#accounting-for-stratified-randomization">later section</a>. For standard error estimates corresponding to marginal ATEs using different contrasts (e.g.&nbsp;ratio instead of difference) see Rosenblum and van der Laan (2010).</p>
-<p>Alternative standard error estimators include the Huber-White estimator and re-sampling based methods like the non-parametric bootstrap. In their recent guidance, the FDA recommends using the Huber-White robust “sandwich” estimator instead of nominal standard error estimates from statistical software <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span>. However, if using a working regression model with treatment-by-covariate interactions, the expected sandwich standard error estimates may be too small when treatment effects are heterogeneous (<a href="#appendix">see Appendix</a> and <span class="citation" data-cites="imbens">Imbens and Wooldridge (<a href="#ref-imbens" role="doc-biblioref">2009</a>)</span> , <span class="citation" data-cites="lin2013">Lin (<a href="#ref-lin2013" role="doc-biblioref">2013</a>)</span>). Bootstrap methods are a reasonable alternative, but we prefer TMLE estimators since they are easier to implement and less computationally intensive. Furthermore, bootstrap methods lead to confidence intervals and p-values that are not deterministic. An intriguing alternative to the bootstrap that is deterministic is the jackknife <span class="citation" data-cites="jackknife">(<a href="#ref-jackknife" role="doc-biblioref">Wolbers et al. 2022</a>)</span>.</p>
+<p>Alternative standard error estimators include the Huber-White estimator and re-sampling based methods like the non-parametric bootstrap. In their recent guidance, the FDA recommends using a “robust standard error method such as the Huber-White “sandwich” standard error when the model does not include treatment by covariate interactions” and they recognize that “other robust standard error methods proposed in the literature can also cover cases with interactions” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2023</a>)</span>. If using a working regression model with treatment-by-covariate interactions, the expected sandwich standard error estimates may be too small when treatment effects are heterogeneous (<a href="#appendix">see Appendix</a> and <span class="citation" data-cites="imbens">Imbens and Wooldridge (<a href="#ref-imbens" role="doc-biblioref">2009</a>)</span> , <span class="citation" data-cites="lin2013">Lin (<a href="#ref-lin2013" role="doc-biblioref">2013</a>)</span>). Bootstrap methods are a reasonable alternative, but we prefer TMLE estimators since they are easier to implement and less computationally intensive. Furthermore, bootstrap methods lead to confidence intervals and p-values that are not deterministic. An intriguing alternative to the bootstrap that is deterministic is the jackknife <span class="citation" data-cites="jackknife">(<a href="#ref-jackknife" role="doc-biblioref">Wolbers et al. 2022</a>)</span>.</p>
 </section>
 <section id="determining-your-model-budget" class="level2">
 <h2 class="anchored" data-anchor-id="determining-your-model-budget">Determining your Model Budget</h2>
 <p>Is there such a thing as adjusting for too many prognostic covariates? Yes! The marvelous properties of covariate adjustment discussed thus far (consistency, robustness to model misspecification, precision gains, etc.) are <strong>large sample properties</strong>. Thus, adjusting for too many covariates in your working model relative to your sample size may invalidate the analysis <span class="citation" data-cites="ML Colantuoni2015 Steingrimsson2016">(<a href="#ref-ML" role="doc-biblioref">Rosenblum 2020</a>; <a href="#ref-Colantuoni2015" role="doc-biblioref">Colantuoni and Rosenblum 2015</a>; <a href="#ref-Steingrimsson2016" role="doc-biblioref">Rosenblum and Steingrimsson 2016</a>)</span>, and the FDA advises against adjusting for too many covariates:</p>
 <blockquote class="blockquote">
-<p>“The statistical properties of covariate adjustment are best understood when the number of covariates adjusted for in the study is small relative to the sample size.”<span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span></p>
+<p>“The statistical properties of covariate adjustment are best understood when the number of covariates adjusted for in the study is small relative to the sample size.”<span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2023</a>)</span></p>
 </blockquote>
 <p>Explicit guidance on how many covariates to adjust for is not offered, so we borrow from prognostic modeling practices <span class="citation" data-cites="rms">(<a href="#ref-rms" role="doc-biblioref">Harrell 2011</a>)</span>.</p>
 <div class="callout-definition callout callout-style-default no-icon callout-captioned">
@@ -663,7 +667,7 @@ There is a large body of evidence showing that for tabular data, purely additive
 </section>
 <section id="accounting-for-stratified-randomization" class="level2">
 <h2 class="anchored" data-anchor-id="accounting-for-stratified-randomization">Accounting for Stratified Randomization</h2>
-<p>The <a href="#standardized-regression-estimator">estimation</a> and <a href="#inference-for-tams-and-ates">inference</a> procedures described in the previous sections assume <em>simple randomization</em>, where each patient’s treatment assignment is an independent and identically distributed Bernoulli random variable for a trial with two treatment arms and a categorical random variable for a trial with more than two treatment arms. However, randomization in clinical trials is usually stratified by selected baseline covariates, for example, using permuted block randomization. In this case, the FDA recommends that the standard error estimation <em>“account for the stratified randomization (Bugni et al.&nbsp;2018) with or without strata variables in an adjustment model. Otherwise, the standard error is likely to be overestimated and interval estimation and hypothesis testing can become unduly conservative”</em> <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2021</a>)</span>.</p>
+<p>The <a href="#standardized-regression-estimator">estimation</a> and <a href="#inference-for-tams-and-ates">inference</a> procedures described in the previous sections assume <em>simple randomization</em>, where each patient’s treatment assignment is an independent and identically distributed Bernoulli random variable for a trial with two treatment arms and a categorical random variable for a trial with more than two treatment arms. However, randomization in clinical trials is usually stratified by selected baseline covariates, for example, using permuted block randomization. In this case, the FDA recommends “that the standard error computation account for stratified randomization” because “an analysis ignoring stratified randomization is likely to overestimate standard errors and can be unduly conservative when performing inference for the average treatment effect” <span class="citation" data-cites="FDA">(<a href="#ref-FDA" role="doc-biblioref">FDA 2023</a>)</span>.</p>
 <p><strong>However, we recommend that it is NOT necessary to modify estimation and inference to account for stratified randomization.</strong> Instead, we propose that the previously described strategy for <a href="#spending-your-model-budget-wisely">spending the model budget wisely</a> be used and applied to all prognostic candidates, making no distinction between stratification factors and other baseline covariates. Then use covariate adjustment as described in the previous sections for estimation and inference of the marginal ATEs, <em>as if treatment were allocated using simple random sampling</em>.</p>
 <p>Note that, as a consequence:</p>
 <ol type="1">
@@ -929,7 +933,7 @@ No Correlation in Treatment Arm
 <section id="model-in-action" class="level2">
 <h2 class="anchored" data-anchor-id="model-in-action">Model in Action</h2>
 <p>The MAHALO study independent test set shown in the previous section was the Phase 2 trial for Lampalizumab. There was an observed treatment effect of ∼20% slowing progression in the higher dose (LQ4 - monthly treatment) compared to the Sham (no treatment) arm. This effect was not confirmed by the two large global Phase 3 trials (SPECTRI and CHROMA), so in retrospect we know this was a false-positive result. When the decision was made to move forward with a Phase 3 trial, the DL FAF model was not available. However, it is an interesting post-hoc exercise to see how results from the Phase 2 trial would have changed had the DL FAF model been used for covariate adjustment.</p>
-<p>The figure below shows the estimated mean changes in GA lesion size with and without adjusting for the FAF DL model. Covariate adjustment leads to better precision and hence tighter confidence intervals for the treatment effect estimate and also changes the estimate in case of imbalances. In this example, the estimate changes (from 20% to 6%) and becomes non-significant (a p-value threshold of 0.2 is usually used in a Phase 2 trial).</p>
+<p><a href="#fig-ga-mahalo-ex">Figure&nbsp;10</a> shows the estimated mean changes in GA lesion size with and without adjusting for the FAF DL model. Covariate adjustment leads to better precision and hence tighter confidence intervals for the treatment effect estimate and also changes the estimate in case of imbalances. In this example, the estimate changes (from 20% to 6%) and becomes non-significant (a p-value threshold of 0.2 is usually used in a Phase 2 trial).</p>
 <div id="fig-ga-mahalo-ex" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="images/ga_mahalo_example.png" class="img-fluid figure-img"></p>
@@ -982,9 +986,9 @@ No Correlation in Treatment Arm
 </section>
 <section id="acknowledgements" class="level1">
 <h1>Acknowledgements</h1>
-<p><strong>Roche GA Development Team</strong>: Neha Anegondi, Lee Honigberg, Simon Gao, Qi Yang, Daniela Ferrara, Julia Cluceru, Verena Steffen</p>
+<p><strong>Roche GA Development Team</strong>: Verena Steffen, Neha Anegondi, Daniela Ferrara, Simon Gao, Qi Yang, Julia Cluceru, Lee Honigberg</p>
 <p><strong>Methods, Collaboration, Outreach (MCO)</strong>: Ray Lin, Marcel Wolbers</p>
-<p><strong>Website Development</strong>: Doug Kelkhoff</p>
+<p><strong>Website design</strong>: Doug Kelkhoff</p>
 </section>
 <section id="appendix" class="level1">
 <h1>Appendix</h1>
@@ -1008,7 +1012,7 @@ No Correlation in Treatment Arm
 <section id="huber-white-sandwich-estimator" class="level2">
 <h2 class="anchored" data-anchor-id="huber-white-sandwich-estimator">Huber White Sandwich Estimator</h2>
 <p>Below is a simple simulation demonstrating how the Huber-White robust “sandwich” estimator will give standard error estimates that are too small when treatment effects are heterogeneous and a working regression model with treatment-by-covariate interactions is used.</p>
-<div class="cell">
+<div class="cell" data-hash="index_cache/html/hws_est_superpopulation_17a9076332907831554d36a56fc2c6ab">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
@@ -1134,18 +1138,18 @@ No Correlation in Treatment Arm
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">True SE</td>
-<td style="text-align: center;">0.0214373</td>
-<td style="text-align: center;">0.0214312</td>
+<td style="text-align: center;">0.0213702</td>
+<td style="text-align: center;">0.0213635</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Mean TMLE SE</td>
-<td style="text-align: center;">0.0211753</td>
-<td style="text-align: center;">0.0211741</td>
+<td style="text-align: center;">0.0211727</td>
+<td style="text-align: center;">0.0211716</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Mean HW SE</td>
-<td style="text-align: center;">0.0211780</td>
-<td style="text-align: center;">0.0154906</td>
+<td style="text-align: center;">0.0211753</td>
+<td style="text-align: center;">0.0154888</td>
 </tr>
 </tbody>
 </table>
@@ -1189,7 +1193,7 @@ Ding, Peng, Xinran Li, and Luke Miratrix. 2017. <span>“Bridging Finite and Sup
 ———. 2019. <span>“Rerandomization and Regression Adjustment.”</span> <em>arXiv</em>. <a href="https://arxiv.org/abs/1906.11291">https://arxiv.org/abs/1906.11291</a>.
 </div>
 <div id="ref-FDA" class="csl-entry" role="doc-biblioentry">
-FDA, U. S. 2021. <span>“Adjusting for Covariates in Randomized Clinical Trials for Drugs and Biological Products Guidance for Industry.”</span> <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products">https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products</a>.
+FDA, U. S. 2023. <span>“Adjusting for Covariates in Randomized Clinical Trials for Drugs and Biological Products Guidance for Industry.”</span> <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products">https://www.fda.gov/regulatory-information/search-fda-guidance-documents/adjusting-covariates-randomized-clinical-trials-drugs-and-biological-products</a>.
 </div>
 <div id="ref-Freedman2008a" class="csl-entry" role="doc-biblioentry">
 Freedman, D. A. 2008a. <span>“Randomization Does Not Justify Logistic Regression.”</span> <em>Statistical Science</em>, 2008a.
@@ -1272,21 +1276,20 @@ Wong, Jeffrey, Randall Lewis, and Matthew Wardrop. 2019. <span>“Efficient Comp
 <div id="ref-Tsiatis2001" class="csl-entry" role="doc-biblioentry">
 Yang, Li, and Anastasios A. Tsiatis. 2001. <span>“Efficiency Study of Estimators in a Pretest-Posttest Trial.”</span> <em>The American Statistician</em>.
 </div>
-</div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{schiffman2022,
-  author = {Courtney Schiffman and Christina Rabe and Michel
-    Friesenhahn},
+</div></section><section class="quarto-appendix-contents"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@misc{schiffman,christinarabeandmichelfriesenhahn2022,
+  author = {Courtney Schiffman, Christina Rabe and Michel Friesenhahn},
   title = {How to Get the Most Out of Prognostic Baseline Variables in
     Clinical Trials. {Effective} Strategies for Employing Covariate
     Adjustment and Stratification.},
   date = {2022-10-12},
-  url = {stats4datascience.com},
+  url = {https://www.go.roche.com/stats4datascience},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman2022" class="csl-entry quarto-appendix-citeas" role="doc-biblioentry">
-Courtney Schiffman, Christina Rabe, and Michel Friesenhahn. 2022.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-schiffman,christinarabeandmichelfriesenhahn2022" class="csl-entry quarto-appendix-citeas" role="doc-biblioentry">
+Courtney Schiffman, Christina Rabe and Michel Friesenhahn. 2022.
 <span>“How to Get the Most Out of Prognostic Baseline Variables in
 Clinical Trials. Effective Strategies for Employing Covariate Adjustment
-and Stratification.”</span> <a href="https://stats4datascience.com">stats4datascience.com</a>.
+and Stratification.”</span> <a href="https://www.go.roche.com/stats4datascience">https://www.go.roche.com/stats4datascience</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

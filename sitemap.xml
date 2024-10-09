@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://github.com/stats-4-datascience/blog/software.html</loc>
+    <lastmod>2024-10-09T20:51:01.225Z</lastmod>
+  </url>
+  <url>
     <loc>https://github.com/stats-4-datascience/blog/about.html</loc>
-    <lastmod>2024-02-21T17:13:22.546Z</lastmod>
+    <lastmod>2024-10-09T20:51:01.909Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/stats-4-datascience/blog/index.html</loc>
-    <lastmod>2024-02-21T17:13:23.186Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/stats-4-datascience/blog/posts/three_metrics_binary/index.html</loc>
-    <lastmod>2024-02-21T17:13:23.910Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/stats-4-datascience/blog/posts/three_metrics/index.html</loc>
-    <lastmod>2024-02-21T17:13:25.154Z</lastmod>
+    <lastmod>2024-10-09T20:51:02.429Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/stats-4-datascience/blog/posts/covariate_adjustment/index.html</loc>
-    <lastmod>2024-02-21T17:13:26.530Z</lastmod>
+    <lastmod>2024-10-09T20:51:04.277Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/stats-4-datascience/blog/posts/additive_model/index.html</loc>
+    <lastmod>2024-10-09T20:51:05.757Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/stats-4-datascience/blog/posts/three_metrics/index.html</loc>
+    <lastmod>2024-10-09T20:51:07.373Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/stats-4-datascience/blog/posts/Prescreener/index.html</loc>
+    <lastmod>2024-10-09T20:51:09.693Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/stats-4-datascience/blog/posts/three_metrics_binary/index.html</loc>
+    <lastmod>2024-10-09T20:51:10.597Z</lastmod>
   </url>
 </urlset>

@@ -2,9 +2,11 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/three_metrics_binary/index.html",
+      "/posts/covariate_adjustment/index.html",
       "/posts/three_metrics/index.html",
-      "/posts/covariate_adjustment/index.html"
+      "/posts/three_metrics_binary/index.html",
+      "/posts/Prescreener/index.html",
+      "/posts/additive_model/index.html"
     ]
   }
 ]

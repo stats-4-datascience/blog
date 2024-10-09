@@ -1,15 +1,17 @@
 /* css styles */
 
 .navbar-title {
-  font-family: "Regular", Verdana, sans-serif;
+  font-family: "Regular", Verdana, Source Code Pro, sans-serif;
   letter-spacing: 0.12rem;
+}
+
+.navbar-brand-logo {
+  padding-bottom: 0;
 }
 
 .navbar-title .fancy-four {
   padding: 0 0.2rem;
   font-family: "Regular", Brush Script MT, Brush Script Std, cursive;
-  font-style: italic;
-  font-weight: bold;
   font-size: 1.8rem;
 }
 
@@ -41,6 +43,5 @@ div.callout.callout-definition > .callout-body {
   padding-bottom: 0.25rem;
 }
 
-.cell-output-display {
-  overflow-x: scroll;
-}
+
+
