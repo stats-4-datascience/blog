@@ -1,0 +1,47 @@
+---
+title: "Our Software"
+title-block-banner: true
+---
+
+```{=html}
+<style>
+a.no-link-style {
+  color: inherit;
+}
+</style>
+```
+
+::: {.grid}
+
+::: {.g-col-3}
+[![](assets/logo-modsculpt.png)](https://genentech.github.io/modsculpt)
+:::
+
+::: {.g-col-9}
+## `modsculpt` <a class="mx-2 no-link-style" href="https://github.com/genentech/modsculpt"><i class="bi bi-github"></i></a>
+
+[![](https://github.com/genentech/modsculpt/actions/workflows/check.yaml/badge.svg)](https://genentech.github.io/modsculpt/unit-test-report/)
+[![](https://github.com/genentech/modsculpt/actions/workflows/docs.yaml/badge.svg)](https://genentech.github.io/modsculpt/)
+
+Direct and Indirect Additive Modeling with Model Sculpting
+:::
+
+:::
+
+
+::: {.grid}
+
+::: {.g-col-3}
+[![](assets/stats4phc_logo.png)](https://genentech.github.io/stats4phc)
+:::
+
+::: {.g-col-9}
+## `stats4phc` <a class="mx-2 no-link-style" href="https://github.com/genentech/stats4phc"><i class="bi bi-github"></i></a>
+
+[![](https://github.com/genentech/stats4phc/actions/workflows/check.yaml/badge.svg)](https://genentech.github.io/stats4phc/unit-test-report/)
+[![](https://github.com/genentech/stats4phc/actions/workflows/docs.yaml/badge.svg)](https://genentech.github.io/stats4phc/)
+
+Performance Evaluation for the Prognostic Value of Predictive Models Intended to Support Personalized Healthcare Through Predictiveness Curves and Positive / Negative Predictive Values
+:::
+
+:::

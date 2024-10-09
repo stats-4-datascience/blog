@@ -23,12 +23,9 @@ date-modified: last-modified
 citation:
   type: post
   title: How to get the most out of prognostic baseline variables in clinical trials. Effective strategies for employing covariate adjustment and stratification.
-  author:
-    - Courtney Schiffman
-    - Christina Rabe
-    - Michel Friesenhahn 
-  url: stats4datascience.com
-  available-date: 2022/10/12
+  author: Courtney Schiffman, Christina Rabe and Michel Friesenhahn 
+  url: https://www.go.roche.com/stats4datascience
+  issued: 2022/10/12
 bibliography: references.bib
 ---
 
@@ -82,8 +79,8 @@ endpoints. Fortunately, there have been advancements that have resolved this
 controversy. Our first aim for this blog is to build on those advancements and
 provide concrete guidance on how to perform treatment effect estimation and
 inference using covariate adjustment that is both rigorous and
-easy-to-implement. In general, standard ANCOVA-based inference is correct *when
-the regression model is correctly specified*, whereas the covariate adjustment
+easy-to-implement. In general, standard ANCOVA-based inference is correct when
+the regression model is correctly specified, whereas the covariate adjustment
 methods proposed here are asymptotically robust to model misspecification.
 
 Furthermore, the pre-specified covariates that are currently used in clinical
@@ -109,7 +106,6 @@ and ordinal outcomes as well.
 ![](images/collage.png){width=80%}
 
 </center>
-
 
 
 Covariate adjustment has recently gained popularity in a variety of industries.
@@ -163,7 +159,7 @@ four engines are on fire and the captain has had a heart-attack can you say:
 ![Conditional type-1 error depending on imbalance](images/imbalance.png){#fig-imbalence}
 
 How do you address concerns over imbalance? Following the analysis from Stephen
-Senn, the figure above shows the conditional type 1 error as a function of
+Senn, @fig-imbalence shows the conditional type 1 error as a function of
 standardized observed imbalance for a range of assumed correlations between the
 baseline covariate and outcome. This shows that significance tests for imbalance
 (a commonly used and misguided practice) can fail to flag imbalance effects even
@@ -337,7 +333,7 @@ In summary, applying machine learning to the trial data as part of the primary e
 
 ## Standardized Regression Estimator
 
-Table 1 provides instructions and code for estimating the Treatment Arm Means
+@tbl-estimation provides instructions and code for estimating the Treatment Arm Means
 (TAMs) and the marginal ATE (in this case, the difference in means) using
 covariate adjustment. The example code shows how to estimate these quantities
 for trials with two treatment arms, but easily generalizes to more than two
@@ -392,7 +388,7 @@ Other contrasts of the marginal means (TAMs) may be similarily estimated.
 |      | outcome under EACH treatment   |                                                                              |
 |      | of interest (regardless of     | # Binary outcome                                                             |
 |      | what their assigned treatment  | pred0 <- predict(mod.fit, newdata = data.frame(A=0, X=d$X), type=‘response’) |
-|      | was)                           | pred1 <- predict(mod.fit, newdata = data.frame(A=1, X=d$X), type=‘response’)  |
+|      | was)                           | pred1 <- predict(mod.fit, newdata = data.frame(A=1, X=d$X, type=‘response’)  |
 |      |                                | ```                                                                          |
 +------+--------------------------------+------------------------------------------------------------------------------+
 | 3    | Take the average of the        | ```{ .sourceCode .r }                                                        |
@@ -415,7 +411,7 @@ Other contrasts of the marginal means (TAMs) may be similarily estimated.
 :::
 
 
-In the example code in Table 1, $X$ is a single covariate, but $X$ can also be a
+In the example code in @tbl-estimation, $X$ is a single covariate, but $X$ can also be a
 matrix containing a set of individual covariates, a prediction from an
 independent prognostic model, or a combination thereof. When the working
 regression model is an additive OLS regression, the standardized regression
@@ -446,7 +442,7 @@ Model Budget]).
 In case of missing values in baseline covariates, a baseline covariate
 that has too many missing values should not be used for adjustment, but if the
 number of missing values is small, we recommend simple, single imputation as
-opposed to using indicator variables in order to spend the model budget wisely.  
+opposed to using indicator variables in order to spend the model budget wisely. 
 
 ## Inference for TAMs and ATEs
 
@@ -455,7 +451,7 @@ likelihood estimation (TMLE) literature because they are robust to model
 misspecification, are fast and easy to implement with a few lines of code, are
 valid under any randomization ratio and data generating distribution, provide
 standard error estimates for both ATEs and treatment arm means, are aligned with
-the superpopulation framework and are deterministic. 
+the superpopulation framework and are deterministic [@TMLE2010]. 
 
 Let $I(A_i=a)$ be an indicator of patient $i$ receiving treatment $A=a$ and
 $p(A=a)$ be the probability of being assigned to treatment arm $A=a$. The TMLE
@@ -526,6 +522,7 @@ covariates:
 > "The statistical properties of covariate adjustment are best understood when
 > the number of covariates adjusted for in the study is small relative to the
 > sample size."[@FDA]
+
 Explicit guidance on how many covariates to adjust for is not offered, so we
 borrow from prognostic modeling practices [@rms].
 
@@ -630,11 +627,8 @@ identically distributed Bernoulli random variable for a trial with two treatment
 arms and a categorical random variable for a trial with more than two treatment
 arms. However, randomization in clinical trials is usually stratified by
 selected baseline covariates, for example, using permuted block randomization.
-In this case, the FDA recommends that the standard error estimation *"account
-for the stratified randomization (Bugni et al. 2018) with or without strata
-variables in an adjustment model. Otherwise, the standard error is likely to be
-overestimated and interval estimation and hypothesis testing can become unduly
-conservative"* [@FDA].
+In this case, the FDA recommends "that the standard error computation account for stratified randomization" because
+"an analysis ignoring stratified randomization is likely to overestimate standard errors and can be unduly conservative when performing inference for the average treatment effect" [@FDA].
 
 **However, we recommend that it is NOT necessary to modify estimation and
 inference to account for stratified randomization.** Instead, we propose that
@@ -1134,7 +1128,7 @@ trial, the DL FAF model was not available. However, it is an interesting
 post-hoc exercise to see how results from the Phase 2 trial would have changed
 had the DL FAF model been used for covariate adjustment.
 
-The figure below shows the estimated mean changes in GA lesion size with and
+@fig-ga-mahalo-ex shows the estimated mean changes in GA lesion size with and
 without adjusting for the FAF DL model. Covariate adjustment leads to better
 precision and hence tighter confidence intervals for the treatment effect
 estimate and also changes the estimate in case of imbalances. In this example,
@@ -1192,12 +1186,11 @@ clinical trials.
 
 # Acknowledgements
 
-**Roche GA Development Team**: Neha Anegondi, Lee Honigberg, Simon Gao, Qi Yang,
-Daniela Ferrara, Julia Cluceru, Verena Steffen
+**Roche GA Development Team**: Verena Steffen, Neha Anegondi, Daniela Ferrara, Simon Gao, Qi Yang, Julia Cluceru, Lee Honigberg
 
 **Methods, Collaboration, Outreach (MCO)**: Ray Lin, Marcel Wolbers
 
-**Website Development**: Doug Kelkhoff
+**Website design**: Doug Kelkhoff 
 
 # Appendix
 
@@ -1220,7 +1213,7 @@ Below is a simple simulation demonstrating how the Huber-White robust
 treatment effects are heterogeneous and a working regression model with
 treatment-by-covariate interactions is used.
 
-```{r hws_est_superpopulation, eval = T, echo = TRUE}
+```{r hws_est_superpopulation, eval = T, echo = TRUE, cache=TRUE}
 library(dplyr)
 library(ggplot2)
 library(sandwich)

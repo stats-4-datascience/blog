@@ -3,15 +3,18 @@ title: "About"
 about:
   template: jolla
   links:
-    - icon: github
+    - icon: code-slash
       text: GitLab
-      href: https://github.com/stats-4-datascience
+      href: https://code.roche.com/schiffmc 
 ---
 
 <center>
 
-![](assets/stats4datascience.png){width=60%}
+![](stats4datascience.png){width=60%}
 
 </center>
+
+
+
 
 Coming Soon!

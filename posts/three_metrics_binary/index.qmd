@@ -24,9 +24,9 @@ date-modified: last-modified
 citation:
   type: post
   title: Everything you wanted to know about R2 but were afraid to ask. Part 2, Binary outcomes and generalizing the fundamental decomposition. 
-  author: Michel Friesenhahn and Christina Rabe and Courtney Schiffman
-  url: stats4datascience.com
-  available-date: 2023/10/31
+  author: Michel Friesenhahn, Christina Rabe and Courtney Schiffman
+  url: https://www.go.roche.com/stats4datascience
+  issued: 2023/10/31
 bibliography: references.bib
 csl: begell-house-apa.csl
 editor_options: 

@@ -1,0 +1,345 @@
+---
+title: "Optimizing Pre-screening Tools for Clinical Trials"
+author:
+- name: Christina Rabe
+  affiliation: Genentech
+  affiliation-url: https://www.gene.com/
+- name: Michel Friesenhahn
+  affiliation: Genentech
+  affiliation-url: https://www.gene.com/
+- name: Courtney Schiffman
+  affiliation: Genentech
+  affiliation-url: https://www.gene.com/
+- name: Tobias Bittner
+  affiliation: Genentech
+  affiliation-url: https://www.gene.com/
+image: images/mona_lisa.PNG
+categories:
+- prescreening
+- utility
+- clinical trial
+- screening
+- biomarker
+subtitle: A practical guide with intuitive performance metrics and examples
+date: 03/11/2024
+date-modified: last-modified
+embed-resources: TRUE
+citation:
+  type: post
+  title: Optimizing Pre-screening Tools for Clinical Trials
+  author: Christina Rabe, Michel Friesenhahn, Courtney Schiffman and Tobias Bittner 
+  url: https://www.go.roche.com/stats4datascience
+  issued: 2024/03/11
+bibliography: references.bib
+---
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+
+myblue <- rgb(23, 55, 94, maxColorValue = 255)
+# some of the pictures for this blog in case they need to be modified are created here:
+#https://docs.google.com/presentation/d/10uxOip6FxzkO2VjIqLPj_JAwGGmngiPJzds4fahsMrw/edit#slide=id.g2651fda458f_0_62
+
+```
+
+# Screening and Pre-screening in clinical trials
+
+<center>![Finding the right patients can sometimes be like finding the needle in the haystack, especially in preventive settings where patients might not have been diagnosed yet](images/needle.PNG){width="58%"}</center>
+
+</br>
+
+When designing a clinical trial, researchers have to define the patient population that they want to study. This results in a list of inclusion and exclusion criteria (eligibility criteria) which are carefully chosen to optimize the probability for the trial to succeed - i.e. being able to demonstrate efficacy and safety if the intervention proves beneficial. These eligibility criteria are often a combination of specific disease diagnosis, a specific disease stage, comorbidities, and sometimes targeting patients that are more likely to respond based on their disease subtype. Selecting and optimizing these criteria, which is often called clinical trial enrichment (see the FDA guideline on enrichment [@FDAGuide]), is out of scope for this blog. We will assume that all eligibility criteria have been established and now the goal is to *most efficiently identify patients that meet these eligibility criteria.*
+
+Finding the right patients for a clinical trials who meet the eligibility criteria can be burdensome, costly and take a long time. It is not unusual that the recruitment for a Phase III trial takes more than a year [@Brogger]. Screen-failure rates are often high, indicating that it can not be easily foreseen if a patient will meet all criteria. Patients may also not be interested or willing to participate, especially if the trial is burdensome for the patient, i.e. by frequent visits or invasive assessments. Pre-screening is often referred to as gaining an initial understanding of eligibility and willingness to participate before any study-specific screening procedures are initiated, i.e. before informed consent for the trial is obtained. This can for example be based on historical information from patients. However, any assessment that is prospectively being performed solely for the purpose of the clinical trial is considered part of the recruitment (screening) strategy and needs to be outlined for review by the respective authorities and may require a specific informed consent (see for example p.21 in the EMA Q&A [@EMAGuide]). *In this blog, we will focus on evaluating a specific pre-screening tool for a clearly defined goal, e.g. reducing the screen failure rate for a costly or invasive procedure. As such, we define pre-screening as an initial assessment very early in the screening funnel with an imperfect tool*. For patients where the pre-screening tool does not give an answer with high certainty, the "gold standard" tool would then be applied to confirm eligibility. Note that if the pre-screening tool was established as an equivalent tool to the gold standard, we would not call it "*pre-*"screening, it would become the actual screening tool. The purpose of this blog is to understand what type of "imperfect" is acceptable and how to assess what performance is "good enough". The tool could be any type of assessment - i.e. a biomarker measured in blood, a cognitive test using an automated phone interview, a prediction model based on an existing image related to the condition etc. Note that tools used for this purpose may fall under medical device regulations (including SaMD: software as a medical device).
+
+# Problem Statement and Value Proposition {#sec-problem}
+
+The first and most important step is to understand the main challenges in recruiting patients for the trial. Ideally there is some knowledge about the potential screening funnel, i.e. where, when and which assessments are going to be made during screening, and an estimate of screenfailure rates for each eligibility criteria. This information can be obtained from previous or similar trials, or by getting estimates from potential clinical trial sites. Suggesting a specific order of assessments to follow during screening, e.g. starting with criteria that have the highest screenfailure rate, is often the first step to optimizing the screening process. However, this is not always optimal or feasible, e.g. when the highest screenfailure rate comes from a costly or invasive tool (see [example section][An example from Alzheimer's Disease]). It is also not always time efficient and practical to wait for results before continuing the screening.
+
+A difficult problem to address is when the highest screenfailure rate comes from a highly specialized or invasive test, i.e. a test that can only be carried out by a specialist or with specialized equipment. This does not only lead to high cost, but can often create a bottleneck during screening and lead to a delay in recruitment. In such a setting, there could be different value statements with an imperfect pre-screening tool:
+
+::: callout-definition
+# Scenario A: Gold Standard creates Bottleneck - low prevalence
+
+</br>
+
+<center>![](images/funnel1.PNG){width="50%"}</center>
+
+</br> Assume there are enough patients willing to be screened at the selected clinical trial sites but there is a generally low probability that patients meet an eligibility criteria (i.e. high screenfailure rate). If the gold standard eligibility criteria is difficult to perform (e.g. invasive, or limited capacity e.g. tests that only specialists can perform), this can create a bottleneck in the screening funnel and delay enrollment. An imperfect pre-screening tool can have value if it can screen-out non-eligible patients with high certainty (blue dots) as it avoids screening subjects unnecessarily with the gold standard tool. This can often also save costs. In our haystack analogy this means that we have a big haystack but don't have an efficient tool to screen through it quickly to find the needle. By removing big chunks of the haystack knowing that there is no needle in there and focusing on a smaller area, we can make the whole process more efficient!
+:::
+
+Recruitment may also be slow due to not having a sufficiently large pool of potential patients to screen for a trial. In that case, pre-screening tools can have value if they allow screening in different settings, e.g. at less specialized sites, in a community setting (e.g. community events or local pharmacies) or by searching through historical databases (medical records) to reach a larger screening population. In our haystack analogy, this means we don't even have enough haystacks in front of our door to find a sufficient number of needles, and our gold standard tool can't be applied directly on the farm. So, we have to have a tool that we can bring to the farms and send a part of the haystack to the front of our door. Since we are now looking at haystacks that we are less familiar with, there might be even less needles hidden in each of them. Bringing all haystacks without any selection to our door would create the same bottleneck as in Scenario A!
+
+Note that in these scenarios, the key feature is a high screen-failure rate combined with a bottleneck - if the screenfailure rate was not high for the gold standard, implementing a rule-out prescreening tool might not help at all or could potentially make things worse. Consider that all subjects undergo the pre-screening tool and if most of them are testing positive, you are adding an additional assessment to most subjects! This does not only add cost and time, but in a worst case scenario could even harm screening if the pre-screening tool wrongly screens out eligible subjects. Another watch-out is that the screenfailure rate might be very different in different settings. For example, at a specialist site, where patients are seen for a reason, the screenfailure rate will be lower than going into a broader setting, e.g. screening at a primary care site or community setting. And while a more accessible pre-screening tool might help in screening more subjects, it is not guaranteed that this will lead to faster enrollment if the number of subjects who need to be screened to find one eligible subjects is largely increased compared to the specialist setting.
+
+In case of a costly or invasive tool that does not have a high screenfailure rate, a rule-in tool could be more desirable.
+
+::: callout-definition
+# Scenario B: Gold Standard creates Bottleneck - high prevalence
+
+<center>![](images/funnel3.PNG){width="50%"}</center>
+:::
+
+However, note that it is less likely in many cases that scenario B creates a similar bottleneck as in scenario A since with lower screenfailure rate, less patients in total need to be screened with the gold standard tool to reach the target sample size. Assume we want to recruit 1000 patients into a trial. Now assume that in scenario A the screenfailure rate is 80%. This means we would need to screen 5000 subjects to enroll our target of 1000. If on the other hand the screenfailure rate was only 20%, we only need to screen 1250. Another challenge with a rule-in tool is that the risk associated with the pre-screening is considered much higher since a definite decision would be made for patients based on the pre-screening tool to be enrolled in the trial without confirmation with the gold standard screening tool. *This will likely require high performance, more validation and regulation than a rule-out tool*.
+
+It is worth mentioning that some tools could also be a hybrid between rule-in and rule-out, meaning that the pre-screening tool generates a high certainty for a positive result and negative result in subgroups of patients but indefinite results in others ("grey zone") which would have to be followed up with the confirmatory tool.
+
+::: callout-definition
+# Hybrid pre-screening  
+
+<center>![](images/funnelHybrid.PNG){width="50%"}</center>
+:::
+
+
+::: callout-tip
+## Summary: Rule-out versus rule-in for a pre-screening tool
+
+Pre-screening means a subset of subjects is still tested with the gold standard tool!
+
+-   **Rule-out**: Subjects who are tested negative with the pre-screening tool are screened-out. Subjects tested positive receive the confirmatory gold-standard screening tool and are enrolled accordingly.
+
+-   **Rule-in**: Subjects who are tested positive with the pre-screening tool are enrolled into the trial without further confirmation. Subjects who tested negative are screened with the gold-standard screening tool and are enrolled accordingly.
+
+-   **Hybrid**: The prescreening tool can identify subjects with very high (rule-in) and very low (rule-out) likelihood of being positive. Subjects who end up in the grey zone are screened with the confirmatory tool and are enrolled accordingly.
+:::
+
+In general, pre-screening is more often associated with the rule-out scenario where a positive finding is followed by the confirmatory tool. For simplicity, in this blog we will phrase the evaluation mostly in terms of a rule-out tool, however, the evaluation for a rule-in tool could be done in a similar manner using the same approaches. 
+
+
+# An example from Alzheimer's Disease {#sec-adExample}
+
+Throughout this blog, we will refer to this example to illustrate how to design and evaluate a potential pre-screening tool. One of the pathological hallmark in Alzheimer's Disease (AD) is the formation of amyloid plaques in the brain. Patients screened for Alzheimer's Disease trials are routinely screened for underlying amyloid pathology. Established in vivo methods are either an amyloid PET scan with a radioactive tracer or biomarkers that can be measured in cerebrospinal fluid (CSF). Both methods come with high cost (especially true for PET), patient and site burden/invasiveness, and limited capabilities. This becomes a problem especially in clinical trials in earlier stages of the disease, targeting elderly cognitively normal subjects with underlying amyloid pathology (secondary prevention setting). The screenfailure rate for amyloid pathology in this setting can be as high as 85%. Due to its invasiveness and cost, testing for amyloid by CSF or PET is usually performed as the last step in the screening funnel despite the high failure rate. This also means that many potential trial subjects undergo a number of unnecessary tests at specialized sites, including a whole battery of cognitive tests and an MRI scan, which do not necessarily just create high costs, but also create multiple bottlenecks that are slowing down the enrollment. So, this example falls into scenario A ([section problem statement][Problem Statement and Value Proposition]). Of note, in our initial assessment, we wrongly assumed that it would be difficult to find a large number of interested subjects, and hence didn't consider the bottleneck due to many subjects entering the screening funnel at the same time. This important information was then provided by our clinical operations experts and clinical trial sites, and helped with the optimal planning of the screening funnel.
+
+In recent years, the field of blood based biomarkers in AD made enormous progress. While a blood based biomarker seemed science fiction before 2017, multiple promising biomarker candidates and assay technologies are now showing promising performance in detecting amyloid pathology. A simple blood test, even if not perfect, could be a cost-effective pre-screening tool applied early in the screening funnel to overcome the big challenges to screen for secondary prevention trials in AD. Throughout this blog, we will use this example of evaluating a specific biomarker (the ratio of Ab42/Ab40) for a secondary prevention trial in AD. Due to other considerations [@Rabe], a more promising combination of two different markers was used at the end for the trial in planning [@RabeAAIC] but for simplicity, we will use the single marker example here. It is also worth mentioning that this field is rapidly evolving and a blood test might become the confirmatory screening test in the near future. The data that is used in this example is from the Swedish BioFINDER cohort (for details see [@Rabe]).
+
+# Key performance metrics and defining acceptance criteria
+
+So far, we have been quite vague about "high" screen failure rates, what we mean by "imperfect" and "screen-out with high certainty". This will require a few definitions and a little patience.
+
+First, there is a gold standard test for a certain eligibility criteria, $E$. For pre-screening we have an imperfect test, $prescreener$, that more conveniently, cheaper etc. attempts to predict the outcome of the gold standard, $E$.
+
+Then the pre-screening tool is a *rule-out* test for the gold standard screening test if there is a high degree of confidence when $prescreener$ is negative. This degree of confidence can be measured by the Negative Predictive Value (NPV): $NPV = P(E-|prescreener-)$. We want a rule-out pre-screening tool to have a high NPV, as close to 100% as possible. Value for a rule-out pre-screener occurs when negative screening results are obtained, the more frequently the better. This can be measured by the (pre-)screen-out rate, $P(Prescreener-)$. So, two metrics are key for assessing a rule-out pre-screening tool: the NPV which assesses the confidence of negative pre-screener results and the screen-out rate which assesses how frequently the valuable negative results are obtained.
+
+Similarly, the pre-screening tool is a *rule-in* test for the gold standard screening test if there is a high degree of confidence when $precreener$ is positive. This degree of confidence can be measured by the Positive Predictive Value (PPV): $PPV=P(E+|prescreener+)$. We want a rule-in prescreening tool to have a high PPV, as close to 100% as possible. Value for a rule-in prescreener occurs when positive screening results are obtained, the more frequently the better. This can be measured by the (pre-)screen-in rate, $P(prescreener+)$. So, two metrics are key for assessing a rule-in pre-screening tool: the PPV which assesses the confidence of positive pre-screener results and the screen-in rate which assesses how frequently the valuable positive results are obtained.
+
+To summarize the key metrics that are the starting point for all evaluations:
+
+-   The **negative predictive value (NPV)**:
+
+    $NPV = P(E-|prescreener-)$: the probability to be negative for the eligibility criteria $E$ given a negative pre-screening result
+
+    -   Alternatively, we can define $1-NPV = P(E+|prescreener-)$ - the positive rate in the screen-out population
+
+-   The **positive predictive value (PPV)**:
+
+    $PPV = P(E+|prescreener+)$: the probability to be positive for the eligibility criteria $E$ given a positive pre-screening result
+
+-   **The screen-out rate:** $P(prescreener-)$ this is the proportion that would be called negative by the prescreener
+
+Focusing more on the *rule-out* test, achieving minimum $1-NPV$ with maximum $P(prescreener-)$, i.e. screening out as many subjects as possible with a low positivity rate in the once screened-out, may become a trade-off and we will later show how to translate these direct performance metrics into further relevant and interpretable clinical trial metrics like total number to screen, saved confirmatory tests, saved cost, and duration.
+
+Note that if a patient passes our rule-out pre-screening test this does not necessarily mean that the probability is high that the patient will be positive in the confirmatory test. The probability will be higher though compared to the "unselected" population, i.e. the population that was not pre-screened, meaning $PPV \ge P(E+)$. But why focus on $NPV$ and not rather also aim for a high $PPV$ even for a rule-out test? Importantly, *a "pure" pre-screening tool is meant to not systematically change the composition of the study population that is eventually being enrolled in the trial*. If we exclude too many subjects from further screening who would have tested positive, we might bias the study population compared to a population where the pre-screening tool was not used. In addition, potentially screening-out too many positives, can easily result in an overall less efficient screening process. We will get back to this in a [later section][Number needed to screen].
+
+However, remember from the [problem section][Problem Statement and Value Proposition] that a pre-screening tool can potentially be a hybrid - both a rule-in and a rule-out prescreener. One cutoff could designate patients to rule-in and another would designate patients to rule-out.
+
+## A picture worth more than a thousand words {#sec-MonaLisa}
+
+In the previous section, we have treated the pre-screening tool as if it was binary ($prescreener-$ and $prescreener+$). Although ultimately the decision to further screen a patient is a binary decision, the starting point, i.e. the $prescreener$ output, in most cases is not binary. In our Alzheimer example, the blood test we are looking at is a continuous variable (the ratio of plasma concentrations of Ab42/Ab40). That means, we have a range of possible decision thresholds and need to evaluate the trade-off between the screen-out rate and NPV (or alternatively screen-in and PPV).\
+Let's walk through this with our Alzheimer's Disease example, where we want to evaluate if the biomarker Ab42/Ab40 has utility as a pre-screening tool for determining the amyloid status (PET), which is our confirmatory gold standard screening tool.
+
+**Step 1:** Convert the input variable $x$ (here Ab42/Ab40) into the probability $P(E+|x = x_{c})$. In this case $E+$ is amyloid positive by PET: $P(PET+|Ab42/Ab40)$. For brevity, we will refer to this probability as the "risk" in the following figures. If your input variable is already a calibrated probability, e.g. an output coming from a prediction model, this step is skipped.
+
+![Figure 1: Probability of being PET+ depending on the plasma Ab42/Ab40 concentration. Note that following convention the x-axis was reversed since for this biomarker, lower levels are indicative of disease. Red: PET+, Blue: PET-"](images/Abeta_prob_curve.PNG){fig-align="center" width="550"}
+
+Looking at this figure, we first want to ensure that the risk $P(PET+|Ab42/Ab40)$ is meaningfully different from the population prevalence (horizontal line) in certain ranges of the biomarker - this tells us that the biomarker has information. Population prevalence in this case means $P(E+) = P(PET+)$ and in our AD example, this prevalence is a low value of 15%, meaning that 85% would screenfail in an unselected (before per-screening) population. How can this potential pre-screener be used? Can it be used as a rule-in or a rule-out test for the amyloid positivity eligibility criteria?
+
+We can see that for high Ab42/Ab40 levels (note x-axis is reversed!), the risk is extremely low, very close to zero. This indicates that for high Ab42/Ab40 levels we can safely rule-out amyloid pathology. However, we don't reach very high risk estimates anywhere, so rule-in doesn't seem feasible. Note that this is not just a matter of prevalence, meaning that the prevalence is generally low and hence easier to achieve low risk estimates, but also due the performance of this biomarker.
+
+One piece is missing from this plot: does a sufficiently large subset of the population obtain these extremely low risk estimates? Consider this: If only 2% of patients were assigned risks close to zero, this marker still wouldn't have much utility as a rule-out marker. To understand the utility of a biomarker for a population, we need to look at the distribution of risks. This also helps us to really compare performance between different biomarkers: we don't just need to know how extreme risks can get but also for what proportion of patients these risks would occur. This leads us to step 2.
+
+**Step 2:** When evaluating a tool for its usefulness, it is important to understand its distribution of implied risks. How frequently to we obtain risks with actionable magnitude? A tool that returns more extreme risks (low or high) in a larger fraction of the intended use population will have more utility. A useful tool to evaluate the risk distribution was introduced by Pepe et al. [@Pepe] - the predictiveness curve. So, now we plot the estimated risk $P(E+|x = x_{c})$ versus the percentile of the risk (or equivalently x) of the population. This is equivalent to the inverse of the cumulative distribution function $F(x) = P(x \leq x_{c})$ of the risks, so the percentage negative at threshold $x_c$.
+
+![Figure 2: Predictiveness curve](images/Abeta_pred_curve.PNG){fig-align="center" width="550"}
+
+**Step 3:**  If you have been wondering where and why we lost our key metrics for rule-in and rule-out pre-screening tools, NPV and PPV, let's bring them back into the picture! Note that the risk $P(E+|x=x_{c})$ is the probability *at* threshold $x_c$ whereas PPV and 1-NPV are just the cumulative probabilities or average risks to the left or right of the threshold:
+
+-   $PPV = P(E+|x \ge x_c)$
+-   $NPV = P(E-|x < x_c)$ or $1-NPV = P(E+|x < x_c)$
+
+Since we are evaluating this biomarker as a pre-screening tool for a clinical trial, we are more interested in these cumulative risks since a cutoff would be applied and the cumulative risks would then describe the populations that are being screened-out (prescreener-) or send to further screening (prescreener+).
+
+Building on the predictiveness curve, we propose an *integrated risk profile plot*, which adds the cumulative risks versus the percentile of the tool and contains all information to gain a quick understand of the potential utility of a tool - A picture worth more than a thousand words. Note that we choose to plot 1-NPV here as the positive rate in patients that are called negative by the pre-screening tool.
+
+![Figure 3: Integrated risk profile plot. Grey reference lines are introduced in the [next section][The perfect curve]. below!](images/Abeta_full_integrated.PNG){fig-align="center" width="550"} 
+
+Now we see that we can screen-out about 45% while keeping $1-NPV$ really low (2%), which is quite promising for a rule-out pre-screening tool. The PPV of the population that would be send to further testing reaches 25% - this is an increase of 10% from the initial prevalence of 15% without a pre-screening tool. To further assess whether this performance is good enough, we use this plot as a starting point for all further evaluations which translate these metrics into other characteristics like cost and enrollment duration. However, *if the integrated risk profile plot does not look promising, e.g. low risks are never achieved, you can stop your evaluations*. If it does look promising, continue with additional metrics which are covered in [a later section][Derived trials screening operating characteristics].
+
+## The perfect curve
+In Figure 3, we have added some informative reference lines that indicate what a perfect prescreener would look like. for PPV and 1-NPV that help us understand how far our tool is from being perfect! How would the integrated risk profile plot look like for a perfect tool? This is shwon in Figure 4. In case of a perfect tool (classifying all patients correctly), the risk would be 0 for any percentile below 1-prevalence and 1 for any percentile above. The steeper the risk curve is around the vertical 1-prevalence line, the better the tool. PPV must start at the prevalence as we are calling all patients positive at the lowest possible threshold (lowest percentile). For a perfect prescreener, the optimal threshold percentile is obviously 1-prevalence. Note that at any lower threshold $x_{low}$, the $PPV(x_{low})$ for a perfect marker would be $PPV(x_{low}) = P(E+)/(1-F(x_{low}))$. This is the upper bound that any pre-screener can achieve in terms of PPV at a certain screen-out rate. Similarly, 1-NPV must also end at the prevalence when we are calling all patients negative at the highest percentile and is bounded for any threshold larger than 1-prevalence.
+
+![Figure 4: The risk profile plot of a perfect tool (here assuming 30% prevalence)](images/perfect_IRP_plot.PNG){fig-align="center" width="479"}
+
+
+## Further notes on interpretation
+
+A high NPV (or PPV) is the first requirement for a prescreening tool to ensure that our clinical trial population is very similar to the clinical trial population that would have been enrolled without the prescreener. Let's assume the prescreener is used for rule-out. If compromising the NPV, that means we are losing some true positive patients which would have been enrolled without the prescreener. This might not always be a problem, but can easily lead to a bias if our prescreening tool leads to an unintended enrichment. *This can be evaluated by comparing the population that would be enrolled with or without the prescreener in the training data with respect to important variables*. Factors like age or disease severity can easily interfere with the intended use population as they are also often prognostic for other diagnostic criteria. So, when designing a prescreener, we also need to be careful what factors to include in the tool. And if we decide to compromise the NPV, it should be evaluated if that leads to any enrichment according to important variables.
+
+When interpreting the integrated risk profile plot, there are two very important assumptions that we have not discussed yet:
+
+-   **Representativeness**: The evaluation should be done in the intended use population, e.g. similar to the screening population for our planned clinical trial. Otherwise we can not rely on our risk estimates.
+-   **Calibration**: The ability to interpret the risk and the predictiveness curve requires well calibrated risk estimates. This means that predicted probabilities (risks) match the observed probabilities, i.e. if we were to take a large group of patients with a predicted risk of 15%, the observed prevalence in that group of patients should be close to 15%.
+
+Both aspects will be further addressed and discussed in [a later section][Prevalence Adjustments].
+
+::: callout-tip
+## The integrated risk profile plot
+
+The integrated risk profile plot builds on the predictiveness curve and gives us key insights into the properties of the tool under evaluation: Are the estimated probabilities extreme enough (low or high) for a sufficiently large proportion of the population so that a decision high certainty can be made in a subset of subjects?
+:::
+
+
+
+# Derived trial screening operating characteristics {#sec-metrics}
+
+We have now answered the question why we need a high NPV (or PPV) and whether our tool can achieve that. But we still need to evaluate if the prescreener is truly improving the screening process and whether it is worth implementing. For example, let's say we can screen-out only 20% with an NPV of 99%. How much does that help us? Or should we rather screen-out 40% with an NPV of 97%? Each use case will be different and there will always be a trade-off, but two key metrics to gain further insights into the value of a potential prescreening tool and for deciding on a threshold are:
+
+-   Total number of patients needed to be screened for the trial, which translates into the total time needed to enroll the trial and
+-   Total screening costs
+
+For simplicity, we will again assume that our eligibility is determined by the criteria $E$. If there are a number of screening assessments that would come after the prescreener (as is usually the case), the screenfailure rates and costs of each one need to be factored in, but the following considerations can be easily generalized to that scenario.
+
+Note that the following two sections rely heavily on the PPV and screen-out rate and might seem in contrast to our initial statement that we care more about the NPV for a rule-out test. Note that in our initial assessment, the NPV can be directly interpreted whereas the PPV by itself is not that meaningful. This still holds true but note that from the law of total probability, PPV can be derived from the prevalence, screen-out rate and NPV, and is not an independent parameter as $$PPV = \frac{P(E+) - (1-NPV)\cdot P(prescreener-)}{P(prescrener+)}$$
+
+## Number needed to screen {#sec-N}
+
+In our AD example, the total number needed to be screened rapidly increases when using a threshold that is too aggressive. Also, the reduction in PET scans starts to plateau. At about 45% screen-out rate, the %increase was less than 10% and deemed tolerable given the number of downstream procedures (e.g. PET) that would be saved at that threshold (about 40%).  
+
+![Figure 5: Increase in the total number that need to be screened and the decrease in PET scans that need to be performed](images/Ntot_NPET_plot.PNG){fig-align="center" width="550"}
+
+To derive these curves, consider the following. Without a prescreening tool, if we want to enroll $N_{enroll}$ subjects into a trial, and our screenfailure rate is determined by the eligibility criteria $E$. Then the total number we need to screen to reach our enrollment goal is $$ N_{w/o}=\frac{N_{enroll}}{P(E+)}$$ In this notation $N_{w/o}$ refers to total number to screen in the setting without a prescreener.
+
+Now, if we have a prescreening tool, the number of patients that need to be screened for $E$ when applying a potential cutoff $x_c$ for the prescreener are determined by the $PPV(x_c)$: $$N_{E}(x_c) = \frac{N_{enroll}}{PPV(x_c)}$$ Remember that $PPV(x_c) = P(E+|prescreener \ge x_c)$. However, the total number of subjects that we need to screen, starting with the prescreener can be larger (but never smaller) than $N_{w/o}$: $$N_{w} = \frac{N_{E}(x_c)}{P(prescreener \ge x_c)} = \frac{N_{enroll}}{P(prescreener \ge x_c) \times PPV(x_c)}$$
+
+Let's illustrate this with the perfect pre-screening tool: A perfect tool, would correctly identify all $E+$ and $E-$. If the tool is continuous, it means that the perfect state happens at screenout threshold where $F(x_c) = 1-P(E+)$, meaning that we would screen-out all $E-$ so the "prescreening prevalence" is $P(prescreening \ge x_c) = P(E+)$. With that threshold, $PPV = 1$ (and $1-NPV = 0)$. With that, $N_{w}=N_{w/o}$, so does not change compared to the situation without pre-screener but the number to screen with $E$ reduces to it's minimum to $N_{E} = N_{enroll}$. In general, since $P(prescreener \ge x_c) \times PPV(x_c) \leq P(E+)$, it follows that $N_{w/o} \leq N_w$ (law of total probability).
+
+The time to enroll the trial can be negatively impacted by a pre-screener, if $N_{w}$ increases too much. This happens when the $NPV$ is not high (too many true positives would be screened-out) - this will result in insufficient increase of the prevalence, indicated by a low $PPV$ at that screen-out rate. Hence it is important to understand how easy it is to find patients who are willing to screen and how much of an increase in the total number to screen can be tolerated.
+
+## Screening costs {#sec-cost}
+
+![Figure 6: Percentage change in cost using the pre-screening tool](images/cost.png){fig-align="center" width="550"}
+
+Figure 6 shows an example of a cost curve with specific cost assumptions for the AD example. Note that initially (very low screen-out rate), the cost can be higher since many subjects will then undergo an "additional" test with the pre-screener and both costs apply. This increase in cost can be larger if the pre-screening tool is not substantially cheaper than the gold standard tool! Also note that the cost curve reaches almost it's minimum at around 50% screen-out and then flattens before increasing drastically when we enter a screen-out percentage that screens out all eligible subjects.
+
+The total screening costs depend on how many patients go through each step of the screening funnel. In our simplified scenario, let's assume the $c_{main}$ = cost for each patient being screened with $E$ (main screening). So, the total cost in the setting without pre-screener using the notation from the previous section is: $$
+cost_{w/o} = c_{main} \times N_{w/o}
+$$ Now let's assume $c_{pre}$ is the cost for the pre-screening tool per patient. The total cost for screening when implementing the prescreener is:
+
+$$
+cost_{w} = c_{pre}\times N_{w} + c_{main}\times N_E
+$$ Note that all patients going on to main screening for $E$ are first screened with the pre-screener, so both costs apply to them and they are a subset of $N_w$.
+
+This means that the cost is sufficiently smaller with pre-screener if $c_{pre}$ is smaller than $c_{main}$. The amount it needs to be smaller depends on how many we can screen-out successfully.
+
+$$
+cost_w \leq cost_{w/o} \iff \frac{c_{pre}}{c_{main}} \leq P(prescreener \ge x_c)\times (\frac{PPV(x_c)}{P(E+)}-1)
+$$
+
+Note that depending on the ratio in cost between $c_{pre}$ and $c_{main}$, the cost can become higher at low screening thresholds since many subjects will then undergo an "additional" test with the prescreener and both costs apply. 
+
+The screening cost is not always the primary driver - remember time is money! So, both the number needed to screen and cost need to be taken into account.
+
+# Estimating the risk profile plot {#sec-estimate}
+
+We assume that appropriate data strategies were applied and the performance of the pre-screening tool are estimated using independent data that were not involved in the training or selection of the model being evaluated. If an independent data set is not available, performance metrics can be estimated using an appropriate resampling method to avoid overly optimistic estimates.
+
+Some readers might have noticed that if all we want are NPV and PPV at different percentiles, we can easily obtain non-parametric estimates and don't even need the risk curve that we started off with in [in our performance section][A picture worth more than a thousand words] step 1. We call this the non-parametric approach. While a valid approach, the estimates can be highly noisy and non-monotone especially at the ends of the distribution. Hence, we prefer a smoothed version which will be described below. But we often compare the non-parametric approach with the smoothed version and at least in the middle part of the plot, estimates should be very close if the model was well calibrated. Our R-package stats4phc [@stats4phc] provides flexible functions for all these estimates.
+
+## Non-parametric estimate {#sec-nonp}
+
+The non-parametric estimate for NPV and PPV is a simple frequency estimate at each cutoff. Using Bayes' rule, this can also be written as function of sensitivity and specificity, which can also be written in terms of distribution functions. This is the approach we are using here, since we can easily use this form to adjust the prevalence (see also [this section][Prevalence Adjustments]):
+
+$$PPV(x) = \frac{sensitivity(x)\times P(E+)}{(sensitivity(x)\times P(E+) + (1-specificity(x))\times(1-P(E+))}$$
+
+with $sensitivity(x) = 1 - F_{E+}(x)$ and $specificity = F_{E-}(x)$
+
+Similarily,
+
+$$NPV(x) = \frac{specificity(x)\times (1-P(E+))}{(1-sensitivity(x))\times P(E+) + specificity(x)\times(1-P(E+))}$$
+
+The screen-out percentage is determined by the marker distribution. This can be directly estimated as the empirical distribution function $F(x)$.
+
+Note that in addition to PPV and NPV, a non-parametric estimate of the risk can also be fitted with binning methods or pava which also implements a monotonicity constrain (more details in our R-package stats4phc [@stats4phc]).
+
+## Smoothed estimate
+
+There are multiple approaches to obtain a smoothed estimates for the PPV and NPV. For example, by using a parametric model, e.g. fitting densities. Those often have issues with generating non-proper ROC curves (non convex) which also lead to non-monotone PPV and NPV estimates (hook effects). For example, this happens with the binormal model when variances are not equal. We chose a different approach which is more general and can avoid this effect: We fit a smoother for the outcome on the percentile F(X), optionally with shape constraints such as monotonicity. An alternative is to fit a smoother for the outcome on X and then transform X to F(X). The latter approach leads to a slightly non smoothed risk profile while the former approach consists of a smoothed estimate. The predictions from this model provide our risk estimate $P(E+|(F(x))$ and we can derive the PPV and NPV by integrating the area below the risk curve [@Sachs ; @Gu].
+
+Note that binary outcomes are often modeled using logistic regression. We have observed that this often leads to non-calibrated risk estimates for single markers as the shape does not seem flexible enough. This is why we prefer a more flexible version using the gam approach which allows us to tune the shape of the curve.
+
+# Prevalence Adjustments {#sec-prevadj}
+
+In some cases, the data used to develop and evaluate the prescreening tool might not be fully representative of the intended use population. If certain subgroups are over or under-represented in the training data, this can result in biased performance estimates and hence should always be carefully evaluated and ideally avoided.
+
+A less critical example of this would be that the training data is sampled from a representative population but enriched for $E+$. This could for example be done to reduce the samples that need to be measured with a blood test. In the In this case, all estimates (risk, PPV, NPV, percentiles) need to be adjusted accordingly to the original prevalence of $E+$ in the unenriched population (which is representative of the intended use population).
+
+Our screen-out rate can not be directly estimated from $F(x)$ in the sample and needs to be adjusted according to:
+
+$$
+F(x) = F_{E+}(x)\times \rho + F_{E-}(x)\times (1-\rho)
+$$ with $\rho$ being the expected prevalence in the intended use population (original population that the enriched sample was drawn from).
+
+Prevalence adjustment is straightforward for the non-parametric estimates of NPV and PPV (see [previous section][Non-paramteric estimate] ). For our smoothed estimate, the risk, PPV or 1-NPV can be transformed as follows:
+
+-   Let $h_0$ be the risk, PPV or 1-NPV from the fitted model
+-   $P(E+) = \rho_0$ is the observed prevalence and $\rho$ is the assumed prevalence in the intended use population
+
+then the prevalence-updated risk is:
+
+$$h_1 = \frac{1}{1 + \frac{1-\rho}{\rho} \times (\frac{1}{h_0} - 1) \times \frac{1-\rho_0}{\rho_0}}$$
+
+See [the appendix][Prevalence adjustments for risk estimates] for the derivation.
+
+For all other settings in which the training data is not fully representative for the intended use population, the simple prevalence adjustment can not be applied. Note that the prevalence adjustment described above assumes that the conditional distributions of pre-screener results based on gold standard outcomes are unchanged, i.e. assuming a constant sensitivity and specificity. This is a very strong assumption.
+
+# Last and maybe least: Where is my ROC curve?
+
+If you haven't been missing ROC curves, great, skip this section! But for those of us who went through years of training starting any evaluation of a binary prediction tool with ROC curves (the school of ROCology) - you might want to keep reading and try to unlearn. We generally recommend to follow Frank Harrell's advice when it comes to ROC curves.
+
+<center>![](images/Harrell_quote.PNG){width="49%"}</center>
+
+<br>
+
+ROC curves plot sensitivity versus 1-specificity and it is impossible to directly infer any utility from them. In contrast, our integrated risk predictiveness curve is highly interpretable.\
+
+Note that we are not opposed to starting with general discrimination metrics like AUC (which happens to be the area under the ROC curve but the ROC curve is not needed to calculate AUCs), but they are also not helpful to understand the utility of a tool. Different models can have similar AUCs but only one being suitable for the desired decision making (e.g. rule-out), this could even be the model with worse AUC. For general performance metrics related to discrimination and calibration, also see or blog [@R2blog1] and especially part 2 blog [@R2blog2] for binary endpoints.
+
+# Take Aways
+
+The key take always to remember are:
+
+1.  The problem statement that should be addressed with a prescreening tool needs to be clearly defined
+
+2.  The key performance metrics for a rule-out prescreening test are NPV and screen-out percentage, i.e. what proportion of the screening population can be screened-out with high certainty
+
+3.  A compromised NPV can lead to bias in the trial population
+
+4.  The total number to screen and number needed to screen with the gold standard tool after implementing the prescreener helps to understand the potential efficiency gain in terms of time it takes to enroll the trial and cost
+
+5.  The screening cost can be larger with the pre-screener if the pre-screener is not sufficiently cheaper or is not screening out a sufficiently large number of subjects
+
+# Appendix
+
+## Prevalence adjustment for risk estimates {#sec-prev}
+
+This follows from the following consideration: $f$: density of $E+$ $g$: density of $E-$
+
+$h_0 = \frac{\rho_0\times f}{\rho_0 \times f + (1 - \rho_0) \times g}$
+
+$\frac{1}{h_0} = 1 + \frac{1-\rho_0}{\rho_0} \times \frac{g}{f}$
+
+$\frac{g}{f} = (\frac{1}{h_0} - 1) \times \frac{1-\rho_0}{\rho_0}$
+
+now we can replace $\frac{g}{f}$ in the previous equation and update with the new prevalence $\rho$:
+
+$\frac{1}{h_1} = 1 + \frac{1-\rho}{\rho} \times (\frac{1}{h_0} - 1) \times \frac{1-\rho_0}{\rho_0}$
+
+$h_1 = \frac{1}{1 + \frac{1-\rho}{\rho} \times (\frac{1}{h_0} - 1) \times \frac{1-\rho_0}{\rho_0}}$

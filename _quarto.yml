@@ -5,8 +5,11 @@ website:
   title: "stats<span class='fancy-four'>4</span>datascience"
   favicon: assets/favicon.png
   navbar:
+    background: primary
     logo: assets/favicon.png
     right:
+      - text: Software
+        href: software.qmd
       - text: About
         href: about.qmd
 
@@ -17,3 +20,6 @@ format:
     cls: assets/vancouver-brackets.cls
     toc: true
     fig-align: center
+
+resources:
+  - "assets/additive_model_slide.pdf"

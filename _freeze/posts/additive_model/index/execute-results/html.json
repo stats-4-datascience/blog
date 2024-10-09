@@ -1,0 +1,15 @@
+{
+  "hash": "93c72120ff5a1cc92686732d181f4d93",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"The Unreasonable Effectiveness of Additive Models\"\nauthor:\n- name: Michel Friesenhahn\n  affiliation: Genentech\n  affiliation-url: https://www.gene.com/\n- name: Ondrej Slama\n  affiliation: Genentech\n  affiliation-url: https://www.gene.com/\n- name: Kenta Yoshida\n  affiliation: Genentech\n  affiliation-url: https://www.gene.com/\nimage: images/additive_model_slide.png\ncategories:\n- machine learning\nsubtitle: Building high-performance, trustworthy and insightful Machine Learning Models\ndate: 09/20/2024\ndate-modified: last-modified\nembed-resources: TRUE\ncitation:\n  type: post\n  title: The Unreasonable Effectiveness of Additive Models\n  author: \n    - Michel Friesenhahn\n    - Ondrej Slama\n    - Kenta Yoshida\n  url: https://go.roche.com/stats4datascience\n---\n\n::: {.cell}\n\n:::\n\n\n# Preface\n\nAdditive modeling algorithms are an essential part of the machine learning modeler’s \ntool kit when working with tabular data. Such predictive models have excellent\nintrinsic interpretability and often have optimal or near optimal performance.\nWhile linear additive models are the most common type of additive models, and they often\nhave optimal performance, there are also many cases where additive functions need \nmore flexibility.\n\nTo address this need we have developed the Model Sculpting method for building \nadditive models. This is a model building pipeline that starts from developing\na strong learner, such as boosted trees, and then extracts an additive model that\nbest approximates the strong learner, thereby providing a more interpretable model\nwith limited cost in performance. \n\nThe [slide deck](/assets/additive_model_slide.pdf) below provides an overview of the Model Sculpting method and its\napplications. The [`modsculpt` R package](https://github.com/Genentech/modsculpt) provides an implementation of the method\nand the [example workflow](https://genentech.github.io/modsculpt_example/) demonstrates\nhow to use the package to build an additive model.\n\n# Contents\n\n- [Slide deck](/assets/additive_model_slide.pdf)\n- [`modsculpt` R package](https://github.com/Genentech/modsculpt)\n- [Example workflow for model sculpting](https://genentech.github.io/modsculpt_example/)\n\n::: {.border}\n[![The Unreasonable Effectiveness of Additive Models](images/additive_model_slide.png){width=100%}](/assets/additive_model_slide.pdf)\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
